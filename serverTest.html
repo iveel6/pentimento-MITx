@@ -1,0 +1,70 @@
+<html>
+    <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+        <script src="renderer.js"></script>
+    </head>
+    <body>
+        <input type="text">
+        <br>
+        <canvas width=640 height=480></canvas>
+        <br>
+        <div style="height:10px;background-color:green;"></div>
+    </body>
+    <script>
+        var lecture;
+        
+        $.ajax({url: 'http://localhost:8080',
+                data: {want: 'header'}
+               }).done(function(response) {
+            lecture = JSON.parse(response);
+            
+            
+            var canvas = $('canvas')[0];
+            var renderer = PentimentoRenderer();
+            
+            $('input').attr('placeholder','Max Time: '+lecture.durationInSeconds);
+            $('input').on('keyup',function(e){
+                if(e.which === 13) {
+                    var startTime = Date.now();
+                    var trash = renderer.renderFrame(lecture, canvas, parseFloat($(this).val()));
+                    console.log(Date.now()-startTime, trash);
+                }
+            });
+            
+            pollForVisuals(0);
+            pollForTransforms(0);
+        });
+        
+        function pollForVisuals(index) {
+            $.ajax({url: 'http://localhost:8080',
+                     data: {want: 'visual', index: index}
+                    }).done(function(response) {
+                if(lecture.visuals === undefined)
+                    lecture.visuals = [];
+                var newVisual = JSON.parse(response);
+                lecture.visuals.push(newVisual);
+                $('div').css('width',((newVisual.tEndEdit/lecture.durationInSeconds)*1000+'px'));
+                if(index < lecture.numStrokes-1)
+                    pollForVisuals(index+1);
+                else
+                    console.log('visuals done');
+            });
+        }
+        
+        function pollForTransforms(index) {
+            $.ajax({url: 'http://localhost:8080',
+                     data: {want: 'transform', index: index}
+                    }).done(function(response) {
+                if(lecture.cameraTransforms === undefined)
+                    lecture.cameraTransforms = [];
+                var newTransform = JSON.parse(response);
+                lecture.cameraTransforms.push(newTransform);
+                if(index < lecture.numTransforms-1)
+                    pollForTransforms(index+1);
+                else
+                    console.log('transforms done');
+            });
+        }
+        
+    </script>
+</html>
