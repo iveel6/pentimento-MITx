@@ -6,11 +6,11 @@
  *
  */
 
-var PentimentoRenderer = function(canvascontainer, data) {
+var PentimentoRenderer = function(canvas_container, data) {
     
-    var jqcanvas = canvascontainer.find('canvas');
-    var canvas = jqcanvas[0];
-    var context = canvas.getContext('2d');
+    var jq_canvas = canvas_container.find('canvas');
+    var main_canvas = jq_canvas[0];
+    var main_context = main_canvas.getContext('2d');
     
     var freePosition = false;
     var transformMatrix = {
@@ -19,8 +19,8 @@ var PentimentoRenderer = function(canvascontainer, data) {
     };
     var playbackID;
     var startTime;
-    var xscale = canvas.width/data.width;
-    var yscale = canvas.height/data.height;
+    var main_xscale = main_canvas.width/data.width;
+    var main_yscale = main_canvas.height/data.height;
     
     function caller(info) {
         // refocus, select, pan
@@ -41,16 +41,29 @@ var PentimentoRenderer = function(canvascontainer, data) {
         }
     }
     
-    var listener = PentimentoListener(canvascontainer, data, caller, xscale, yscale);
+    var listener = PentimentoListener(canvas_container, data, caller, main_xscale, main_yscale);
 
     function renderFrame(time, timeOfPreviousThumb, thumbCanvas) {
-        prepareFrame(time);
-        listener.update({
-            time: time,
-            transformMatrix: transformMatrix
-        });
+        var canvas = thumbCanvas || main_canvas;
+        var context = canvas.getContext('2d');
+        var xscale = canvas.width/data.width;
+        var yscale = canvas.height/data.height;
         
         var isThumb = timeOfPreviousThumb !== undefined;
+        
+        if(isThumb) {
+            var initialFree = freePosition;
+            freePosition = false;
+            prepareFrame(time, canvas, context);
+            freePosition = initialFree;
+        }
+        else {
+            prepareFrame(time, canvas, context);
+            listener.update({
+                time: time,
+                transformMatrix: transformMatrix
+            });
+        }
         
         for(var i=0; i<data.visuals.length; i++){
             var currentStroke = data.visuals[i];
@@ -121,7 +134,7 @@ var PentimentoRenderer = function(canvascontainer, data) {
                             j = vertices.length;
                     }
                     if(path.length > 0)
-                        drawPath(0, path, false);
+                        drawPath(0, path, false, context);
                 }
             }
         }
@@ -133,16 +146,19 @@ var PentimentoRenderer = function(canvascontainer, data) {
         return thumbCanvas;
     }
     
-    function prepareFrame(time) {
+    function prepareFrame(time, canvas, context) {
         context.setTransform(1, 0, 0, 1, 0, 0);
         context.clearRect(0, 0, canvas.width, canvas.height);
         
-        setCameraTransform(time);
+        setCameraTransform(time, canvas, context);
     }
     
-    function setCameraTransform(time) {
+    function setCameraTransform(time, canvas, context) {
+        var xscale = canvas.width/data.width;
+        var yscale = canvas.height/data.height;
+        
         if(!freePosition) {
-            transformMatrix = getCameraTransform(time);
+            transformMatrix = getCameraTransform(time, canvas);
         }
         
         if(data.preprocessed & freePosition) {
@@ -154,27 +170,29 @@ var PentimentoRenderer = function(canvascontainer, data) {
             transformMatrix.ty = Math.min(Math.max(transformMatrix.ty,
                                                    canvas.height-data.boundingRect.ymax*yscale*transformMatrix.m22),
                                           -data.boundingRect.ymin*yscale*transformMatrix.m22);
-            drawScrollBars();
+            drawScrollBars(canvas, context);
         }
         
         context.setTransform(transformMatrix.m11, transformMatrix.m12,
                              transformMatrix.m21, transformMatrix.m22,
                              transformMatrix.tx, transformMatrix.ty);
         $('iframe').css('-webkit-transform',
-                        'matrix('+transformMatrix.m11+','+
+                        'matrix('+transformMatrix.m11/2+','+
                         transformMatrix.m12+','+transformMatrix.m21+','+
-                        transformMatrix.m22+','+transformMatrix.tx+','+
+                        transformMatrix.m22/2+','+transformMatrix.tx+','+
                         transformMatrix.ty+')');
         
         if(freePosition) {
             freePosition = false;
-            var box = getCameraTransform(time);
-            drawBox(box.tx, box.ty, box.m11, box.m22);
+            var box = getCameraTransform(time, canvas);
+            drawBox(box.tx, box.ty, box.m11, box.m22, canvas, context);
             freePosition = true;
         }
     }
     
-    function getCameraTransform(time) {
+    function getCameraTransform(time, canvas) {
+        var xscale = canvas.width/data.width;
+        var yscale = canvas.height/data.height;
         var cameraChanges = data.cameraTransforms;
         var nextTransform = cameraChanges[cameraChanges.length-1];
         var previousTransform = cameraChanges[0];
@@ -200,7 +218,7 @@ var PentimentoRenderer = function(canvascontainer, data) {
         return newTransformMatrix;
     }
     
-    function drawPath(startIndex, path, reversed) {
+    function drawPath(startIndex, path, reversed, context) {
         if(startIndex === 0)
             context.beginPath();
         var point = path[startIndex];
@@ -234,7 +252,9 @@ var PentimentoRenderer = function(canvascontainer, data) {
         }
     }
     
-    function drawScrollBars() {
+    function drawScrollBars(canvas, context) {
+        var xscale = canvas.width/data.width;
+        var yscale = canvas.height/data.height;
         var tx = transformMatrix.tx;
         var ty = transformMatrix.ty;
         var zx = transformMatrix.m11;
@@ -254,7 +274,9 @@ var PentimentoRenderer = function(canvascontainer, data) {
         context.stroke();
     }
     
-    function drawBox(tx, ty, zx, zy) {
+    function drawBox(tx, ty, zx, zy, canvas, context) {
+        var xscale = canvas.width/data.width;
+        var yscale = canvas.height/data.height;
         context.beginPath();
         context.strokeStyle = 'rgba(0,0,255,0.1)';
         context.lineCap = 'butt';

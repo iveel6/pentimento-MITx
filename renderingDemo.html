@@ -8,21 +8,22 @@
         <script src="preprocessor.js"></script>
         <style>
             .canvas {
-                width: 800px;
-                height: 600px;
+                width: 640px;
+                height: 480px;
                 overflow: hidden;
             }
             iframe {
                 position: relative;
                 top: -480px;
+                -webkit-transform: scale(0.5);
             }
         </style>
     </head>
     <body>
         <input type="text"><br>
         <div class="canvas">
-            <canvas width=800 height=600></canvas>
-            <iframe width=640 height=480 frameborder=0 scrolling=no src="http://web.mit.edu/6.mitx/www/6.00%20Line-Fitter/line-fitter.html"></iframe>
+            <canvas width=640 height=480></canvas>
+            <iframe width=800 height=600 frameborder=0 scrolling=no src="http://web.mit.edu/6.mitx/www/6.00%20Line-Fitter/line-fitter.html"></iframe>
         </div>
         <div class='thumbs'></div>
     </body>
@@ -43,16 +44,16 @@
             var canvas = $('.canvas');
             var renderer = PentimentoRenderer(canvas, lecture);
             
-//            for(var i=0; i<5; i++) {
-//                $('.thumbs').append(renderer.getThumbCanvas(100, 75, (i+1)/5*lecture.durationInSeconds, i/5*lecture.durationInSeconds));
-//            }
-//            $('.thumbs').find('canvas').each(function() {
-//                $(this).css({
-//                    float: 'left',
-//                    margin: '10px',
-//                    border: '1px solid gray'
-//                });
-//            });
+            for(var i=0; i<5; i++) {
+                $('.thumbs').append(renderer.getThumbCanvas(100, 75, (i+1)/5*lecture.durationInSeconds, i/5*lecture.durationInSeconds));
+            }
+            $('.thumbs').find('canvas').each(function() {
+                $(this).css({
+                    float: 'left',
+                    margin: '10px',
+                    border: '1px solid gray'
+                });
+            });
             
             $('input').attr('placeholder','Max Time: '+lecture.durationInSeconds);
             $('input').on('keyup',function(e){
