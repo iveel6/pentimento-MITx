@@ -4,7 +4,7 @@
         <script src="generalfunctions.js"></script>
         <script src="listeners.js"></script>
         <script src="renderer.js"></script>
-        <script src="diffra.js"></script>
+        <script src="archive/asdf.js"></script>
         <script src="preprocessor.js"></script>
         <style>
             .canvas {
@@ -23,26 +23,31 @@
         <input type="text"><br>
         <div class="canvas">
             <canvas width=640 height=480></canvas>
-            <iframe width=800 height=600 frameborder=0 scrolling=no src="http://web.mit.edu/6.mitx/www/6.00%20Line-Fitter/line-fitter.html"></iframe>
+<!--            <iframe width=800 height=600 frameborder=0 scrolling=no src="http://web.mit.edu/6.mitx/www/6.00%20Line-Fitter/line-fitter.html"></iframe>-->
         </div>
         <div class='thumbs'></div>
     </body>
     <script>
         $(document).ready(function() {
             var initialLength = 0;
-            for(var i=0; i<lecture.visuals.length; i++)
-                initialLength += lecture.visuals[i].vertices.length;
+            for(var i=0; i<lecture.visuals.length; i++) {
+                if(lecture.visuals[i].type === "stroke")
+                    initialLength += lecture.visuals[i].vertices.length;
+            }
             
             preprocess(lecture, 1);
             
             var finalLength = 0;
-            for(var i=0; i<lecture.visuals.length; i++)
-                finalLength += lecture.visuals[i].vertices.length;
+            for(var i=0; i<lecture.visuals.length; i++) {
+                if(lecture.visuals[i].type === "stroke")
+                    finalLength += lecture.visuals[i].vertices.length;
+            }
             
             console.log(initialLength, finalLength);
             
             var canvas = $('.canvas');
             var renderer = PentimentoRenderer(canvas, lecture);
+            var listener = PentimentoListener(canvas, lecture, renderer.fire);
             
             for(var i=0; i<5; i++) {
                 $('.thumbs').append(renderer.getThumbCanvas(100, 75, (i+1)/5*lecture.durationInSeconds, i/5*lecture.durationInSeconds));
@@ -57,9 +62,9 @@
             
             $('input').attr('placeholder','Max Time: '+lecture.durationInSeconds);
             $('input').on('keyup',function(e){
-                if(e.which === 13) {
+//                if(e.which === 13) {
                     renderer.renderFrame(parseFloat($(this).val()));
-                }
+//                }
             });
         });
     </script>

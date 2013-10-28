@@ -1,7 +1,11 @@
-var PentimentoListener = function(canvascontainer, data, caller, xscale, yscale) {
-    var jqcanvas = canvascontainer.find("canvas");
+var PentimentoListener = function(canvas_container, data, listener) {
+    var jqcanvas = canvas_container.find("canvas");
     var canvas = jqcanvas[0];
     var context = canvas.getContext('2d');
+    
+    var xscale = canvas.width/data.width;
+    var yscale = canvas.height/data.height;
+    
     var offset = jqcanvas.offset();
     var minDistance = 20;
     var furthestTime = 0;
@@ -10,6 +14,7 @@ var PentimentoListener = function(canvascontainer, data, caller, xscale, yscale)
     function selectStroke(x, y){
         x = Math.round((x-offset.left-transformMatrix.tx)/transformMatrix.m11)/xscale;
         y = data.height-Math.round((y-offset.top-transformMatrix.ty)/transformMatrix.m22)/yscale;
+        console.log(x, y, offset.top);
         var closestPoint={stroke:-1,distance:(minDistance*xscale)};
         for(var i=0; i<data.visuals.length; i++){ //run though all strokes
             var currentStroke=data.visuals[i];
@@ -17,13 +22,15 @@ var PentimentoListener = function(canvascontainer, data, caller, xscale, yscale)
             if (currentStroke.doesItGetDeleted){
                 if (currentStroke.tDeletion<furthestTime) deletedYet=true;
             }
-            for(var j=0;j<currentStroke.vertices.length; j++){ //run through all verticies
-                if (currentStroke.vertices[j].t<furthestTime & !deletedYet){
-                    //check closeness of x,y to this current point
-                    var dist = getDistance({x:x,y:y},currentStroke.vertices[j]);
-                    if (dist<closestPoint.distance){ //this point is closer. update closestPoint
-                        closestPoint.distance=dist;
-                        closestPoint.stroke=currentStroke;
+            if(currentStroke.type === "stroke" & !deletedYet) {
+                for(var j=0;j<currentStroke.vertices.length; j++){ //run through all verticies
+                    if (currentStroke.vertices[j].t<furthestTime){
+                        //check closeness of x,y to this current point
+                        var dist = getDistance({x:x,y:y},currentStroke.vertices[j]);
+                        if (dist<closestPoint.distance){ //this point is closer. update closestPoint
+                            closestPoint.distance=dist;
+                            closestPoint.stroke=currentStroke;
+                        }
                     }
                 }
             }
@@ -67,7 +74,7 @@ var PentimentoListener = function(canvascontainer, data, caller, xscale, yscale)
     }
     
     function pan(dx, dy) {
-        caller({
+        listener({
             event: 'pan',
             data: {dx: dx, dy: dy}
         });
@@ -98,19 +105,13 @@ var PentimentoListener = function(canvascontainer, data, caller, xscale, yscale)
     }
     
     function mouseUp() {
-        mousePressed = false;
-        if(!mouseDragged) { // if clicked
-            caller({
+        if(!mouseDragged && mousePressed) { // if clicked
+            listener({
                 event: 'select',
                 data: selectStroke(previousX,previousY)
             });
         }
-    }
-    
-    function keyDown(e) {
-        var keyCode = e.keyCode || e.which;
-        if(keyCode === 13)
-            caller({event: 'refocus'});
+        mousePressed = false;
     }
     
     function doubleClickHandler(input) {
@@ -200,28 +201,34 @@ var PentimentoListener = function(canvascontainer, data, caller, xscale, yscale)
         move: mouseMove,
         up: mouseUp,
         double: function(e, target) {
-//            if(target === canvas) {
-//                setFreePosition(true);
-//                var x = e.pageX-offset.left,
-//                    y = e.pageY-offset.top;
-//                mousePressed = false;
-//                var nz = totalZoom===1?2:1;
-//                animateZoom(nz, x, y);
-//            }
+            if(target === canvas) {
+                mousePressed = false;
+                listener({
+                    event: 'doubleclick',
+                    data: {cx: e.pageX-offset.left,
+                           cy: e.pageY-offset.top}
+                });
+            }
         },
         tolerance: 200
     });
-    $(window).on('keydown', keyDown);
     
-    canvascontainer[0].addEventListener('mousewheel', function(e) {
+    canvas_container[0].addEventListener('mousewheel', function(e) {
         e.preventDefault();
         e.stopPropagation();
         pan(e.wheelDeltaX || 0, e.wheelDeltaY || e.wheelDelta);
     });
     
     function update(info) {
-        furthestTime = info.time;
-        transformMatrix = info.transformMatrix;
+        if(info.event === 'playback') {
+            furthestTime = info.time;
+            transformMatrix = info.transformMatrix;
+        }
+        else if(info.event === 'resize') {
+            offset = jqcanvas.offset();
+            xscale = canvas.width/data.width;
+            yscale = canvas.height/data.height;
+        }
     }
     
     return {update: update};

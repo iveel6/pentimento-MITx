@@ -8,12 +8,15 @@ function preprocess(data, e) {
                     height: 0};
     boundingRect.width = data.width;
     boundingRect.height = data.height;
-    for(var i=0; i<data.visuals.length; i++)
-        data.visuals[i].vertices = RDPalg(data.visuals[i].vertices, e);
+    for(var i=0; i<data.visuals.length; i++) {
+        if(data.visuals[i].type === "stroke")
+            data.visuals[i].vertices = RDPalg(data.visuals[i].vertices, e);
+    }
     boundingRect.width = boundingRect.xmax-boundingRect.xmin;
     boundingRect.height = boundingRect.ymax-boundingRect.ymin;
     data.boundingRect = boundingRect;
     data.minZoom = Math.min(data.width/boundingRect.width,data.height/boundingRect.height);
+    data.maxZoom = 4;
 }
 
 function RDPalg(vertices, e) {

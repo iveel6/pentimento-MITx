@@ -18,30 +18,46 @@ var PentimentoRenderer = function(canvas_container, data) {
         tx: 0, ty: 0
     };
     var playbackID;
+    var animateID;
     var startTime;
     var main_xscale = main_canvas.width/data.width;
     var main_yscale = main_canvas.height/data.height;
     
-    function caller(info) {
-        // refocus, select, pan
-        if(info.event === 'select') {
-            if(info.data !== -1) {
-                renderFrame(info.data.tMin);
-            }
-        }
-        else if(info.event === 'pan') {
+    function fire(info) {
+        if(info.event === 'pan') {
             freePosition = true;
             transformMatrix.tx += info.data.dx;
             transformMatrix.ty += info.data.dy;
-            renderFrame(50);
+            if(info.data.paused) renderFrame(info.data.time);
+        }
+        else if(info.event === 'zoomIn') {
+            freePosition = true;
+            animateZoom(Math.min(transformMatrix.m11*3/2,data.maxZoom), info.data);
+        }
+        else if(info.event === 'zoomOut') {
+            freePosition = true;
+            animateZoom(Math.max(transformMatrix.m11*2/3,data.minZoom), info.data);
+        }
+        else if(info.event === 'doubleclick') {
+            freePosition = true;
+            animateZoom(transformMatrix.m11===1?2:1, info.data, info.data.cx, info.data.cy);
+        }
+        else if(info.event === 'minZoom') {
+            freePosition = true;
+            animateZoom(data.minZoom, info.data);
         }
         else if(info.event === 'refocus') {
-            freePosition = false;
-            renderFrame(50);
+            if(freePosition) {
+                animateToPos(getCameraTransform(info.data.time+0.5, main_canvas), 500, info.data, function() {
+                    freePosition = false;
+                });
+            }
+        }
+        else if(info.event === 'resize') {
+            main_xscale = main_canvas.width/data.width;
+            main_yscale = main_canvas.height/data.height;
         }
     }
-    
-    var listener = PentimentoListener(canvas_container, data, caller, main_xscale, main_yscale);
 
     function renderFrame(time, timeOfPreviousThumb, thumbCanvas) {
         var canvas = thumbCanvas || main_canvas;
@@ -59,82 +75,84 @@ var PentimentoRenderer = function(canvas_container, data) {
         }
         else {
             prepareFrame(time, canvas, context);
-            listener.update({
-                time: time,
-                transformMatrix: transformMatrix
-            });
         }
         
         for(var i=0; i<data.visuals.length; i++){
             var currentStroke = data.visuals[i];
             var tmin = currentStroke.tMin;
             var deleted=false;
-            
-            if(tmin < time){
-                var vertices = currentStroke.vertices;
-                var properties= currentStroke.properties;
-             
-                var path = [];
                 
-                for(var k=0; k<properties.length; k++){
+            if(tmin < time){
+                if(currentStroke.type === "stroke") {
+                    var vertices = currentStroke.vertices;
+                    var properties= currentStroke.properties;
+                 
+                    var path = [];
                     
-                    var property=properties[k];
-                    if (property.time < time) {
+                    for(var k=0; k<properties.length; k++){
                         
-                        var fadeIndex = 1;
-                        
-                        if(property.type === "fadingProperty") {
-                            var timeBeginFade = currentStroke.tDeletion+property.timeBeginFade;
-                            var fadeDuration = property.durationOfFade;
-                            fadeIndex -= (time-timeBeginFade)/fadeDuration;
-                            if(fadeIndex < 0)
-                                deleted = true;
-                        }
-                        if(property.type === "basicProperty") {
-                            if(currentStroke.tDeletion < time)
-                                deleted = true;
-                        }
-                        
-                        if(!deleted || !currentStroke.doesItGetDeleted) {
-                            context.fillStyle="rgba("+Math.round(property.redFill*255)+","+Math.round(property.greenFill*255)+
-                                              ","+Math.round(property.blueFill*255)+","+(property.alphaFill*fadeIndex)+")";
+                        var property=properties[k];
+                        if (property.time < time) {
                             
-                            context.strokeStyle="rgba("+Math.round(property.red*255)+","+Math.round(property.green*255)+
-                                              ","+Math.round(property.blue*255)+","+(property.alpha*fadeIndex)+")";
+                            var fadeIndex = 1;
                             
-                            context.lineWidth = property.thickness*xscale/10;
+                            if(property.type === "fadingProperty") {
+                                var timeBeginFade = currentStroke.tDeletion+property.timeBeginFade;
+                                var fadeDuration = property.durationOfFade;
+                                fadeIndex -= (time-timeBeginFade)/fadeDuration;
+                                if(fadeIndex < 0)
+                                    deleted = true;
+                            }
+                            if(property.type === "basicProperty") {
+                                if(currentStroke.tDeletion < time)
+                                    deleted = true;
+                            }
                             
-                            if(isThumb) {
-                                if(currentStroke.tEndEdit < timeOfPreviousThumb) {
-                                    context.fillStyle = "rgba(100,100,100,0.3)";
-                                    context.strokeStyle = "rgba(50,50,50,0.3)";
+                            if(!deleted || !currentStroke.doesItGetDeleted) {
+                                context.fillStyle="rgba("+Math.round(property.redFill*255)+","+Math.round(property.greenFill*255)+
+                                                  ","+Math.round(property.blueFill*255)+","+(property.alphaFill*fadeIndex)+")";
+                                
+                                context.strokeStyle="rgba("+Math.round(property.red*255)+","+Math.round(property.green*255)+
+                                                  ","+Math.round(property.blue*255)+","+(property.alpha*fadeIndex)+")";
+                                
+                                context.lineWidth = property.thickness*xscale/10;
+                                
+                                if(isThumb) {
+                                    if(currentStroke.tEndEdit < timeOfPreviousThumb) {
+                                        context.fillStyle = "rgba(100,100,100,0.3)";
+                                        context.strokeStyle = "rgba(50,50,50,0.3)";
+                                    }
+                                    else
+                                        context.lineWidth *= 5;
                                 }
-                                else
-                                    context.lineWidth *= 5;
                             }
                         }
+                    }
+                    
+                    if (!deleted || !currentStroke.doesItGetDeleted){
+                        var previousDrawnIndex = 0;
+                        for (var j = 0; j < vertices.length; j++) {
+                            var vertex = vertices[j];
+                            if (vertex.t < time){
+                                if(j==0 | getDistance(vertex, vertices[previousDrawnIndex]) > 1/xscale) {
+                                    previousDrawnIndex = j;
+                                    var x=vertex.x*xscale;
+                                    var y=(data.height-vertex.y)*yscale;
+                                    var pressure = vertex.pressure;
+                                    var breaking = vertex.break || false;
+                                    path.push([x,y,pressure*context.lineWidth*3,breaking]);
+                                }
+                            }
+                            else
+                                j = vertices.length;
+                        }
+                        if(path.length > 0)
+                            drawPath(0, path, false, context);
                     }
                 }
-                
-                if (!deleted || !currentStroke.doesItGetDeleted){
-                    var previousDrawnIndex = 0;
-                    for (var j = 0; j < vertices.length; j++) {
-                        var vertex = vertices[j];
-                        if (vertex.t < time){
-                            if(j==0 | getDistance(vertex, vertices[previousDrawnIndex]) > 1/xscale) {
-                                previousDrawnIndex = j;
-                                var x=vertex.x*xscale;
-                                var y=(data.height-vertex.y)*yscale;
-                                var pressure = vertex.pressure;
-                                var breaking = vertex.break || false;
-                                path.push([x,y,pressure*context.lineWidth*3,breaking]);
-                            }
-                        }
-                        else
-                            j = vertices.length;
-                    }
-                    if(path.length > 0)
-                        drawPath(0, path, false, context);
+                else if(currentStroke.type === "image") {
+                    var image = $("<img src='Archive/asdf-resources/"+currentStroke.fileName+"'>");
+                    context.drawImage(image[0], currentStroke.x, currentStroke.y, currentStroke.w, currentStroke.h);
                 }
             }
         }
@@ -176,17 +194,15 @@ var PentimentoRenderer = function(canvas_container, data) {
         context.setTransform(transformMatrix.m11, transformMatrix.m12,
                              transformMatrix.m21, transformMatrix.m22,
                              transformMatrix.tx, transformMatrix.ty);
-        $('iframe').css('-webkit-transform',
-                        'matrix('+transformMatrix.m11/2+','+
-                        transformMatrix.m12+','+transformMatrix.m21+','+
-                        transformMatrix.m22/2+','+transformMatrix.tx+','+
-                        transformMatrix.ty+')');
+//        $('iframe').css('-webkit-transform',
+//                        'matrix('+transformMatrix.m11/2+','+
+//                        transformMatrix.m12+','+transformMatrix.m21+','+
+//                        transformMatrix.m22/2+','+transformMatrix.tx+','+
+//                        transformMatrix.ty+')');
         
         if(freePosition) {
-            freePosition = false;
             var box = getCameraTransform(time, canvas);
             drawBox(box.tx, box.ty, box.m11, box.m22, canvas, context);
-            freePosition = true;
         }
     }
     
@@ -291,44 +307,65 @@ var PentimentoRenderer = function(canvas_container, data) {
         context.stroke();
     }
     
-//    function animateToPos(startTime, duration, tx, ty, tz, nx, ny, nz, callback, bounded) {
-//        clearTimeout(animateID);
-//        animating = true;
+    function animateToPosHelper(startTime, duration, tx, ty, tz, nx, ny, nz, info, callback, bounded) {
+        clearTimeout(animateID);
 //        displayZoom(nz);
-//        
-//        if(bounded===undefined) {
-//            nz = Math.min(Math.max(nz,minZoom),maxZoom);
-//            nx = Math.min(Math.max(nx,canvas.width-boundingRect.xmax*xscale*nz),-boundingRect.xmin*xscale);
-//            ny = Math.min(Math.max(ny,canvas.height-boundingRect.ymax*yscale*nz),-boundingRect.ymin*yscale);
-//        }
-//        
-//        var interpolatedTime = Math.pow((Date.now() - startTime)/duration-1,5)+1; // quintic easing
-//        
-//        if(Date.now()-startTime > duration | (tx === nx & ty === ny & tz === nz)) {
-//            animating = false;
-//            translateX = nx, translateY = ny, totalZoom = nz;
-//            if(callback !== undefined)
-//                callback();
-//            if(audio.paused) {
-//                clearFrame();
-//                oneFrame(audio.currentTime);
-//            }
-//        }
-//        else {
-//            totalZoom = tz + (nz - tz)*interpolatedTime;
-//            translateX = tx + (nx - tx)*interpolatedTime;
-//            translateY = ty + (ny - ty)*interpolatedTime;
-//            
-//            if(audio.paused) {
-//                clearFrame();
-//                oneFrame(audio.currentTime);
-//            }
-//            
-//            animateID = setTimeout(function() {
-//                animateToPos(startTime, duration, tx, ty, tz, nx, ny, nz, callback, true);
-//            }, 33);
-//        }
-//    }
+        
+        if(bounded===undefined) {
+            nz = Math.min(Math.max(nz,data.minZoom),data.maxZoom);
+            nx = Math.min(Math.max(nx,main_canvas.width-data.boundingRect.xmax*main_xscale*nz),-data.boundingRect.xmin*main_xscale);
+            ny = Math.min(Math.max(ny,main_canvas.height-data.boundingRect.ymax*main_yscale*nz),-data.boundingRect.ymin*main_yscale);
+        }
+        
+        var interpolatedTime = Math.pow((Date.now() - startTime)/duration-1,5)+1; // quintic easing
+        
+        if(Date.now()-startTime > duration | (tx === nx & ty === ny & tz === nz)) {
+            transformMatrix.tx = nx, transformMatrix.ty = ny, transformMatrix.m11 = nz, transformMatrix.m22 = nz;
+            if(callback !== undefined)
+                callback();
+            if(info.paused) {
+                renderFrame(info.time);
+            }
+        }
+        else {
+            transformMatrix.m11 = tz + (nz - tz)*interpolatedTime;
+            transformMatrix.m22 = transformMatrix.m11;
+            transformMatrix.tx = tx + (nx - tx)*interpolatedTime;
+            transformMatrix.ty = ty + (ny - ty)*interpolatedTime;
+            
+            if(info.paused) {
+                renderFrame(info.time);
+            }
+            
+            animateID = setTimeout(function() {
+                animateToPosHelper(startTime, duration, tx, ty, tz, nx, ny, nz, info, callback, true);
+            }, 33);
+        }
+    }
+    function animateToPos(newMatrix, duration, info, callback) {
+        animateToPosHelper(Date.now(), duration, transformMatrix.tx, transformMatrix.ty, transformMatrix.m11,
+                           newMatrix.tx, newMatrix.ty, newMatrix.m11, info, callback);
+    }
     
-    return {renderFrame: renderFrame, getThumbCanvas: getThumbCanvas};
+    /*************************
+    *
+    *   animated zoom when using side buttons
+    *   zooms in on point (cx,cy), defaults to center screen
+    *************************/
+    function animateZoom(nz, info, cx, cy) {
+        if(cx === undefined)
+            cx = main_canvas.width/2;
+        if(cy === undefined)
+            cy = main_canvas.height/2;
+        var nx = transformMatrix.tx + (1-nz/transformMatrix.m11)*(cx-transformMatrix.tx);
+        var ny = transformMatrix.ty + (1-nz/transformMatrix.m22)*(cy-transformMatrix.ty);
+        freePosition = true;
+        animateToPos({m11: nz, m12: 0, m21: 0, m22: nz, tx: nx, ty: ny}, 500, info);
+    }
+    
+    function getTransformMatrix() {
+        return transformMatrix;
+    }
+    
+    return {renderFrame: renderFrame, getThumbCanvas: getThumbCanvas, fire: fire, transformMatrix: getTransformMatrix};
 };
