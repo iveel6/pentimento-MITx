@@ -176,14 +176,18 @@ var PentimentoRenderer = function(canvas_container, data) {
                     }
                 }
                 else if(currentStroke.type === "image") {
-                    if(currentStroke.imageObject === undefined)
-                        currentStroke.imageObject = $("<img src='Archive1/deblur-resources/"+currentStroke.fileName+"'>")[0];
+                    if(currentStroke.imageCanvas === undefined) {
+                        var imageCanvas = $("<canvas height="+currentStroke.h+" width="+currentStroke.w+"></canvas>")[0];
+                        var imageObject = $("<img src='Archive1/deblur-resources/"+currentStroke.fileName+"'>")[0];
+                        imageCanvas.getContext('2d').drawImage(imageObject,0,0);
+                        currentStroke.imageCanvas = imageCanvas;
+                    }
                     var x = currentStroke.x*xscale;
                     var y = (data.height-currentStroke.y)*yscale;
                     var w = currentStroke.w*xscale;
                     var h = currentStroke.h*yscale;
                     y -= h;
-                    context.drawImage(currentStroke.imageObject, x, y, w, h);
+                    context.drawImage(currentStroke.imageCanvas, x, y, w, h);
                 }
                 
                 context.restore();
