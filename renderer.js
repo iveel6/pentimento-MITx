@@ -58,6 +58,22 @@ var PentimentoRenderer = function(canvas_container, data) {
             main_yscale = main_canvas.height/data.height;
         }
     }
+    
+    function getPageFlipTime(time) {
+        for(var i=1; i<data.pageFlips.length; i++) {
+            if(data.pageFlips[i].time > time)
+                return data.pageFlips[i-1].time;
+        }
+        return data.pageFlips[data.pageFlips.length-1].time;
+    }
+    
+    function getIndividualTransform(visual, time) {
+        for(var i=1; i<visual.transforms.length; i++) {
+            if(visual.transforms[i].time > time)
+                return visual.transforms[i-1];
+        }
+        return visual.transforms[visual.transforms.length-1];
+    }
 
     function renderFrame(time, timeOfPreviousThumb, thumbCanvas) {
         var canvas = thumbCanvas || main_canvas;
@@ -77,12 +93,21 @@ var PentimentoRenderer = function(canvas_container, data) {
             prepareFrame(time, canvas, context);
         }
         
+        var pageFlipTime = getPageFlipTime(time);
+        
         for(var i=0; i<data.visuals.length; i++){
             var currentStroke = data.visuals[i];
             var tmin = currentStroke.tMin;
             var deleted=false;
                 
-            if(tmin < time){
+            if(tmin < time & tmin > pageFlipTime){
+                
+                var individualTransform = getIndividualTransform(currentStroke, time);
+                context.save();
+                context.transform(individualTransform.m11, individualTransform.m12,
+                                  individualTransform.m21, individualTransform.m22,
+                                  individualTransform.tx, individualTransform.ty);
+                
                 if(currentStroke.type === "stroke") {
                     var vertices = currentStroke.vertices;
                     var properties= currentStroke.properties;
@@ -92,7 +117,7 @@ var PentimentoRenderer = function(canvas_container, data) {
                     for(var k=0; k<properties.length; k++){
                         
                         var property=properties[k];
-                        if (property.time < time) {
+//                        if (property.time < time) {
                             
                             var fadeIndex = 1;
                             
@@ -126,7 +151,7 @@ var PentimentoRenderer = function(canvas_container, data) {
                                         context.lineWidth *= 5;
                                 }
                             }
-                        }
+//                        }
                     }
                     
                     if (!deleted || !currentStroke.doesItGetDeleted){
@@ -151,9 +176,16 @@ var PentimentoRenderer = function(canvas_container, data) {
                     }
                 }
                 else if(currentStroke.type === "image") {
-                    var image = $("<img src='Archive/asdf-resources/"+currentStroke.fileName+"'>");
-                    context.drawImage(image[0], currentStroke.x, currentStroke.y, currentStroke.w, currentStroke.h);
+                    if(currentStroke.imageObject === undefined)
+                        currentStroke.imageObject = $("<img src='Archive1/deblur-resources/"+currentStroke.fileName+"'>")[0];
+                    var x = currentStroke.x*xscale;
+                    var y = (data.height-currentStroke.y)*yscale;
+                    var w = currentStroke.w*xscale;
+                    var h = currentStroke.h*yscale;
+                    context.drawImage(currentStroke.imageObject, x, y, w, h);
                 }
+                
+                context.restore();
             }
         }
     }
@@ -194,11 +226,11 @@ var PentimentoRenderer = function(canvas_container, data) {
         context.setTransform(transformMatrix.m11, transformMatrix.m12,
                              transformMatrix.m21, transformMatrix.m22,
                              transformMatrix.tx, transformMatrix.ty);
-//        $('iframe').css('-webkit-transform',
-//                        'matrix('+transformMatrix.m11/2+','+
-//                        transformMatrix.m12+','+transformMatrix.m21+','+
-//                        transformMatrix.m22/2+','+transformMatrix.tx+','+
-//                        transformMatrix.ty+')');
+        $('iframe').css('-webkit-transform',
+                        'matrix('+transformMatrix.m11/2+','+
+                        transformMatrix.m12+','+transformMatrix.m21+','+
+                        transformMatrix.m22/2+','+transformMatrix.tx+','+
+                        transformMatrix.ty+')');
         
         if(freePosition) {
             var box = getCameraTransform(time, canvas);

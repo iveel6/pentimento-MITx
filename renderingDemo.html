@@ -12,6 +12,11 @@
                 height: 480px;
                 overflow: hidden;
             }
+            canvas {
+                position: relative;
+                z-index: 2;
+                pointer-events: none;
+            }
             iframe {
                 position: relative;
                 top: -480px;
@@ -23,7 +28,7 @@
         <input type="text"><br>
         <div class="canvas">
             <canvas width=640 height=480></canvas>
-<!--            <iframe width=800 height=600 frameborder=0 scrolling=no src="http://web.mit.edu/6.mitx/www/6.00%20Line-Fitter/line-fitter.html"></iframe>-->
+            <iframe width=800 height=600 frameborder=0 scrolling=no src="http://web.mit.edu/6.mitx/www/6.00%20Line-Fitter/line-fitter.html"></iframe>
         </div>
         <div class='thumbs'></div>
     </body>

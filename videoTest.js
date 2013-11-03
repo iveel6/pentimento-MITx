@@ -16,11 +16,15 @@ var PentimentoPlayer = function(data) {
         if(info.event === 'select') {
             console.log(info.data);
             if(info.data !== -1) {
-                currentTime = info.data.tMin;
-                audio.currentTime = currentTime;
-                changeSlider(currentTime);
-                if(audio.paused) { // draw the frame
-                    renderer.renderFrame(currentTime);
+                if(info.data.hyperlink !== '')
+                    window.open(info.data.hyperlink);
+                else {
+                    currentTime = info.data.tMin;
+                    audio.currentTime = currentTime;
+                    changeSlider(currentTime);
+                    if(audio.paused) { // draw the frame
+                        renderer.renderFrame(currentTime);
+                    }
                 }
             }
         }
@@ -373,6 +377,7 @@ var PentimentoPlayer = function(data) {
         $('.speedDisplay').css('font-size', fontsize+'px');
         
         renderer.fire({event: 'resize'});
+        renderer.renderFrame(audio.currentTime);
         listener.update({event: 'resize'});
         offset = root.find('.video').offset();
         resizeControls(canvas.width);
