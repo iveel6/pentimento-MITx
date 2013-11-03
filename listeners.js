@@ -102,6 +102,12 @@ var PentimentoListener = function(canvas_container, data, listener) {
             previousX = x;
             previousY = y;
         }
+        else {
+            listener({
+                event: 'mouseMove',
+                data: y
+            });
+        }
     }
     
     function mouseUp() {

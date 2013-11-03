@@ -182,6 +182,7 @@ var PentimentoRenderer = function(canvas_container, data) {
                     var y = (data.height-currentStroke.y)*yscale;
                     var w = currentStroke.w*xscale;
                     var h = currentStroke.h*yscale;
+                    y -= h;
                     context.drawImage(currentStroke.imageObject, x, y, w, h);
                 }
                 

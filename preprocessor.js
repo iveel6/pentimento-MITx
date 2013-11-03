@@ -12,6 +12,62 @@ function preprocess(data, e) {
         if(data.visuals[i].type === "stroke")
             data.visuals[i].vertices = RDPalg(data.visuals[i].vertices, e);
     }
+    
+    // divide stroke into similar-direction
+    // polygons for calligraphy
+    for(var i=0; i<data.visuals.length; i++) {
+        if(data.visuals[i].type === 'stroke') {
+            
+            var visual = data.visuals[i],
+                stroke = visual.vertices;
+            
+            //amplify noisy low-pressure points at beginning and end
+            var clean = false;
+            var cleanIndex = 0;
+            while(!clean & cleanIndex < stroke.length-1) {
+                if(stroke[cleanIndex].pressure < 0.1 | stroke[cleanIndex].pressure < 0.5*stroke[cleanIndex+1].pressure) {
+                    stroke[cleanIndex].pressure = stroke[cleanIndex+1].pressure;
+                    cleanIndex++;
+                }
+                else
+                    clean = true;
+            }
+            clean = false;
+            cleanIndex = stroke.length-1;
+            while(!clean & cleanIndex > 0) {
+                if(stroke[cleanIndex].pressure < 0.1 | stroke[cleanIndex].pressure < 0.5*stroke[cleanIndex-1].pressure) {
+                    stroke[cleanIndex].pressure = stroke[cleanIndex-1].pressure;
+                    cleanIndex--;
+                }
+                else
+                    clean = true;
+            }
+            
+            // use law of cosines to find when
+            // a stroke breaks across 45degs
+            var cosb;
+            
+            var j=0;
+            while(j<stroke.length-1) {
+                var point = stroke[j],
+                    next = stroke[j+1];
+                var ab = getDistance(Math.round(point.x), Math.round(point.y), Math.round(next.x), Math.round(next.y)),
+                    bc = getDistance(Math.round(next.x), Math.round(next.y), Math.round(next.x)+5, Math.round(next.y)+5),
+                    ac = getDistance(Math.round(point.x), Math.round(point.y), Math.round(next.x)+5, Math.round(next.y)+5);
+                if(ab !== 0 & bc !== 0) {
+                    var newcosb = (Math.pow(ab,2)+Math.pow(bc,2)-Math.pow(ac,2))/(2*ab*bc);
+                    if(!isNaN(newcosb) & Math.abs(newcosb) > 0.3) {
+                        if(cosb !== undefined & newcosb/cosb <= 0) {
+                            point.break = true;
+                        }
+                        cosb = newcosb;
+                    }
+                }
+                j++;
+            }
+        }
+    }
+
     boundingRect.width = boundingRect.xmax-boundingRect.xmin;
     boundingRect.height = boundingRect.ymax-boundingRect.ymin;
     data.boundingRect = boundingRect;

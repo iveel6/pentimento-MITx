@@ -1,6 +1,7 @@
 var PentimentoPlayer = function(data) {
     var controls = $('.controls');
     var fullscreenMode = false;
+    var controlsVisible = true;
     var embedded = false;
     var root = $('.pentimento');
     var canvas_container = $('.canvas_container');
@@ -27,6 +28,10 @@ var PentimentoPlayer = function(data) {
                     }
                 }
             }
+        }
+        else if(info.event === 'mouseMove') {
+            if(fullscreenMode)
+                toggleControlsVisibility(info.data);
         }
         else {
             info.data.time = currentTime;
@@ -123,6 +128,34 @@ var PentimentoPlayer = function(data) {
             $('.onScreenStatus').css('opacity',".5");
             $('#pauseIcon').attr('src',nextImg);
         });
+    }
+    
+    /*************************
+    *
+    *   show/hide playback controls depending on mouse position
+    *
+    *************************/
+    function toggleControlsVisibility(y) {
+        if(!controlsVisible & y > $(window).height()-5)
+            animateControls(true);
+        if(controlsVisible & y < $(window).height()-controls.outerHeight(true)-20)
+            animateControls(false);
+    }
+    
+    /*************************
+    *   in fullscreen mode,
+    *   animate playback controls in/out of bottom
+    *
+    *************************/
+    function animateControls(show) {
+        if(show) {
+            controls.animate({top: (canvas.height-controls.outerHeight(true))},200);
+            controlsVisible = true;
+        }
+        else {
+            controls.animate({top: canvas.height},200);
+            controlsVisible = false;
+        }
     }
     
     /*************************
@@ -303,6 +336,23 @@ var PentimentoPlayer = function(data) {
     
     /*************************
     *
+    *   toggle fullscreen mode
+    *
+    *************************/
+    function setFullscreenMode(on) {
+        fullscreenMode = on;
+        try {
+            if(on)  root[0].requestFullScreen();
+            else    document.cancelFullScreen();
+        } catch(e) {}
+        root.find('#fullscreen').find('img').attr('src', fullscreenMode?"images/exitfs.png":"images/fs.png");
+        root.find('#fullscreen').attr('title', fullscreenMode?'Exit Fullscreen (ESC)':'Fullscreen (F)');
+        root.find('.help').css('visibility',fullscreenMode?'hidden':'visible');
+        resizeVisuals();
+    }
+    
+    /*************************
+    *
     *   resizes player components depending on mode
     *
     *************************/
@@ -411,6 +461,12 @@ var PentimentoPlayer = function(data) {
     }
     
     function initialize() {
+        
+        // generalizes vendor-prefixed functions
+        window.requestAnimationFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame;
+        window.cancelAnimationFrame = window.cancelAnimationFrame || window.webkitCancelAnimationFrame || window.mozCancelAnimationFrame;
+        document.cancelFullScreen = document.cancelFullScreen || document.webkitCancelFullScreen || document.mozCancelFullScreen;
+        root[0].requestFullScreen = root[0].requestFullScreen || root[0].webkitRequestFullScreen || root[0].mozRequestFullScreen;
         
         audio.volume=.5; //initial volume
         $('.volumeSlider').slider({
@@ -523,6 +579,10 @@ var PentimentoPlayer = function(data) {
         });
         $('#revertPos').on('click', function() {
             eventHandler({event: 'refocus', data: {}});
+        });
+        $('#fullscreen').on('click', function() {
+            fullscreenMode = !fullscreenMode;
+            setFullscreenMode(fullscreenMode);
         });
         
         $(window).on('resize', resizeVisuals);
