@@ -12,19 +12,20 @@ var PentimentoListener = function(canvas_container, data, listener) {
     var transformMatrix = {m11: 1, m12: 0, m21: 0, m22: 1, tx: 0, ty: 0};
     
     function selectStroke(x, y){
+        var time = audioToVisual(data, furthestTime);
+        
         x = Math.round((x-offset.left-transformMatrix.tx)/transformMatrix.m11)/xscale;
         y = data.height-Math.round((y-offset.top-transformMatrix.ty)/transformMatrix.m22)/yscale;
-        console.log(x, y, offset.top);
         var closestPoint={stroke:-1,distance:(minDistance*xscale)};
         for(var i=0; i<data.visuals.length; i++){ //run though all strokes
             var currentStroke=data.visuals[i];
             var deletedYet=false;
             if (currentStroke.doesItGetDeleted){
-                if (currentStroke.tDeletion<furthestTime) deletedYet=true;
+                if (currentStroke.tDeletion<time) deletedYet=true;
             }
             if(currentStroke.type === "stroke" & !deletedYet) {
                 for(var j=0;j<currentStroke.vertices.length; j++){ //run through all verticies
-                    if (currentStroke.vertices[j].t<furthestTime){
+                    if (currentStroke.vertices[j].t<time){
                         //check closeness of x,y to this current point
                         var dist = getDistance({x:x,y:y},currentStroke.vertices[j]);
                         if (dist<closestPoint.distance){ //this point is closer. update closestPoint

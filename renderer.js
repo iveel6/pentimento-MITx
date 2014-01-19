@@ -6,7 +6,7 @@
  *
  */
 
-var PentimentoRenderer = function(canvas_container, data) {
+var PentimentoRenderer = function(canvas_container, data, resourcepath) {
     
     var jq_canvas = canvas_container.find('canvas');
     var main_canvas = jq_canvas[0];
@@ -76,6 +76,9 @@ var PentimentoRenderer = function(canvas_container, data) {
     }
 
     function renderFrame(time, timeOfPreviousThumb, thumbCanvas) {
+        
+        time = audioToVisual(data, time);
+        
         var canvas = thumbCanvas || main_canvas;
         var context = canvas.getContext('2d');
         var xscale = canvas.width/data.width;
@@ -106,7 +109,8 @@ var PentimentoRenderer = function(canvas_container, data) {
                 context.save();
                 context.transform(individualTransform.m11, individualTransform.m12,
                                   individualTransform.m21, individualTransform.m22,
-                                  individualTransform.tx, individualTransform.ty);
+                                  individualTransform.tx/individualTransform.m11*xscale,
+                                  individualTransform.ty/individualTransform.m22*yscale);
                 
                 if(currentStroke.type === "stroke") {
                     var vertices = currentStroke.vertices;
@@ -147,8 +151,6 @@ var PentimentoRenderer = function(canvas_container, data) {
                                         context.fillStyle = "rgba(100,100,100,0.3)";
                                         context.strokeStyle = "rgba(50,50,50,0.3)";
                                     }
-                                    else
-                                        context.lineWidth *= 5;
                                 }
                             }
 //                        }
@@ -168,26 +170,32 @@ var PentimentoRenderer = function(canvas_container, data) {
                                     path.push([x,y,pressure*context.lineWidth*3,breaking]);
                                 }
                             }
-                            else
+                            else if(j > 0) {
+                                var interpolation = (time-vertices[j-1].t)/(vertices[j].t-vertices[j-1].t);
+                                var x = interpolation*(vertices[j].x-vertices[j-1].x)+vertices[j-1].x;
+                                var y = interpolation*(vertices[j].y-vertices[j-1].y)+vertices[j-1].y;
+                                x = x*xscale;
+                                y = (data.height-y)*yscale;
+                                path.push([x,y,vertices[j].pressure*context.lineWidth*3,false]);
                                 j = vertices.length;
+                            }
                         }
                         if(path.length > 0)
                             drawPath(0, path, false, context);
                     }
                 }
                 else if(currentStroke.type === "image") {
-                    if(currentStroke.imageCanvas === undefined) {
-                        var imageCanvas = $("<canvas height="+currentStroke.h+" width="+currentStroke.w+"></canvas>")[0];
-                        var imageObject = $("<img src='Archive1/deblur-resources/"+currentStroke.fileName+"'>")[0];
-                        imageCanvas.getContext('2d').drawImage(imageObject,0,0);
-                        currentStroke.imageCanvas = imageCanvas;
+                    if(currentStroke.imageObject === undefined) {
+                        var imageObject = document.createElement('img');
+                        imageObject.src = resourcepath+currentStroke.fileName;
+                        currentStroke.imageObject = imageObject;
                     }
                     var x = currentStroke.x*xscale;
                     var y = (data.height-currentStroke.y)*yscale;
                     var w = currentStroke.w*xscale;
                     var h = currentStroke.h*yscale;
                     y -= h;
-                    context.drawImage(currentStroke.imageCanvas, x, y, w, h);
+                    context.drawImage(currentStroke.imageObject, x, y, w, h);
                 }
                 
                 context.restore();
@@ -203,7 +211,9 @@ var PentimentoRenderer = function(canvas_container, data) {
     
     function prepareFrame(time, canvas, context) {
         context.setTransform(1, 0, 0, 1, 0, 0);
-        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.fillStyle = 'rgb('+Math.round(data.backgroundColor.red*255)+','+
+            Math.round(data.backgroundColor.green*255)+','+Math.round(data.backgroundColor.blue*255)+')';
+        context.fillRect(0, 0, canvas.width, canvas.height);
         
         setCameraTransform(time, canvas, context);
     }
@@ -262,12 +272,13 @@ var PentimentoRenderer = function(canvas_container, data) {
         if (nextTransform.time !== previousTransform.time) {
             var interpolatedTime = (time - previousTransform.time)/(nextTransform.time - previousTransform.time);
             newTransformMatrix.m11 = previousTransform.m11+(nextTransform.m11 - previousTransform.m11)*interpolatedTime;
+            newTransformMatrix.m22 = previousTransform.m22+(nextTransform.m22 - previousTransform.m22)*interpolatedTime;
             newTransformMatrix.tx = previousTransform.tx+(nextTransform.tx - previousTransform.tx)*interpolatedTime;
             newTransformMatrix.ty = previousTransform.ty+(nextTransform.ty - previousTransform.ty)*interpolatedTime;
         }
         newTransformMatrix.ty = -newTransformMatrix.ty;
         newTransformMatrix.tx = newTransformMatrix.tx/newTransformMatrix.m11*xscale;
-        newTransformMatrix.ty = newTransformMatrix.ty/newTransformMatrix.m11*yscale;
+        newTransformMatrix.ty = newTransformMatrix.ty/newTransformMatrix.m22*yscale;
         return newTransformMatrix;
     }
     
@@ -298,7 +309,7 @@ var PentimentoRenderer = function(canvas_container, data) {
         point = path[startIndex];
         context.lineTo(point[0]+point[2],point[1]-point[2]);
         if(endIndex !== path.length-1)
-            drawPath(endIndex-1, path, !reversed);
+            drawPath(endIndex-1, path, !reversed, context);
         else {
             context.stroke();
             context.fill();

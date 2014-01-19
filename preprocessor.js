@@ -21,6 +21,18 @@ function preprocess(data, e) {
             var visual = data.visuals[i],
                 stroke = visual.vertices;
             
+            //remove consecutive points closer than 2px
+            var j=0;
+            while(j<stroke.length-1 & stroke.length > 10) {
+                var point = stroke[j];
+                var next = stroke[j+1];
+                if(getDistance(point.x, point.y, next.x, next.y) < 2) {
+                    stroke.splice(j+1,1);
+                }
+                else
+                    j++;
+            }
+            
             //amplify noisy low-pressure points at beginning and end
             var clean = false;
             var cleanIndex = 0;
@@ -41,6 +53,36 @@ function preprocess(data, e) {
                 }
                 else
                     clean = true;
+            }
+            
+            //straighten straight lines and clean up further
+            var begin = stroke[0];
+            var end = stroke[stroke.length-1];
+            var sumDist = 0;
+            var bx = end.x-begin.x;
+            var by = end.y-begin.y;
+            for(var k in stroke) {
+                var point = stroke[k];
+                var ax = point.x-begin.x;
+                var ay = point.y-begin.y;
+                var dot = (ax*bx+ay*by)/(bx*bx+by*by);
+                var cx = ax-dot*bx;
+                var cy = ay-dot*by;
+                sumDist += Math.sqrt(cx*cx+cy*cy);
+            }
+            if(sumDist < getDistance(begin.x,begin.y,end.x,end.y)/10) {
+                j=1;
+                while(j<stroke.length-1) {
+                    var point=stroke[j];
+                    var timescale=(point.t-begin.t)/(end.t-begin.t);
+                    point.x=timescale*(end.x-begin.x)+begin.x;
+                    point.y=timescale*(end.y-begin.y)+begin.y;
+                    var prev=stroke[j-1];
+                    if(getDistance(point.x,point.y,prev.x,prev.y)<2)
+                        stroke.splice(j,1);
+                    else
+                        j++;
+                }
             }
             
             // use law of cosines to find when
