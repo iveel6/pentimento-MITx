@@ -561,6 +561,8 @@ var PentimentoPlayer = function(data) {
         document.cancelFullScreen = document.cancelFullScreen || document.webkitCancelFullScreen || document.mozCancelFullScreen;
         root[0].requestFullScreen = root[0].requestFullScreen || root[0].webkitRequestFullScreen || root[0].mozRequestFullScreen;
         
+        embedded = location.search.indexOf('embedded') >= 0;
+        
         audio.volume=.5; //initial volume
         $('.volumeSlider').slider({
             max:1,
