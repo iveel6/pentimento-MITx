@@ -130,18 +130,17 @@ var PentimentoRenderer = function(canvas_container, data, resourcepath) {
         m11: 1, m12: 0, m21: 0, m22: 1,
         tx: 0, ty: 0
     };
-    var playbackID;
     var animateID;
     var startTime;
     var main_xscale = main_canvas.width/data.width;
     var main_yscale = main_canvas.height/data.height;
     
-    function fire(info) {
+    this.fire = function (info) {
         if(info.event === 'pan') {
             freePosition = true;
             transformMatrix.tx += info.data.dx;
             transformMatrix.ty += info.data.dy;
-            if(info.data.paused) renderFrame(info.data.time);
+            if(info.data.paused) this.renderFrame(info.data.time);
         }
         else if(info.event === 'zoomIn') {
             freePosition = true;
@@ -180,7 +179,7 @@ var PentimentoRenderer = function(canvas_container, data, resourcepath) {
         return data.pageFlips[data.pageFlips.length-1].time;
     }
 
-    function renderFrame(time, timeOfPreviousThumb, thumbCanvas) {
+    this.renderFrame = function (time, timeOfPreviousThumb, thumbCanvas) {
         
         time = audioToVisual(data, time);
         
@@ -208,9 +207,9 @@ var PentimentoRenderer = function(canvas_container, data, resourcepath) {
         }
     }
     
-    function getThumbCanvas(width, height, time, timeOfPreviousThumb) {
+    this.getThumbCanvas = function (width, height, time, timeOfPreviousThumb) {
         var thumbCanvas = $('<canvas width='+width+' height='+height+'></canvas>')[0];
-        renderFrame(time, timeOfPreviousThumb, thumbCanvas);
+        this.renderFrame(time, timeOfPreviousThumb, thumbCanvas);
         return thumbCanvas;
     }
     
@@ -377,7 +376,7 @@ var PentimentoRenderer = function(canvas_container, data, resourcepath) {
             if(callback !== undefined)
                 callback();
             if(info.paused) {
-                renderFrame(info.time);
+                this.renderFrame(info.time);
             }
         }
         else {
@@ -387,7 +386,7 @@ var PentimentoRenderer = function(canvas_container, data, resourcepath) {
             transformMatrix.ty = ty + (ny - ty)*interpolatedTime;
             
             if(info.paused) {
-                renderFrame(info.time);
+                this.renderFrame(info.time);
             }
             
             animateID = setTimeout(function() {
@@ -416,9 +415,7 @@ var PentimentoRenderer = function(canvas_container, data, resourcepath) {
         animateToPos({m11: nz, m12: 0, m21: 0, m22: nz, tx: nx, ty: ny}, 500, info);
     }
     
-    function getTransformMatrix() {
+    this.transformMatrix = function () {
         return transformMatrix;
     }
-    
-    return {renderFrame: renderFrame, getThumbCanvas: getThumbCanvas, fire: fire, transformMatrix: getTransformMatrix};
 };
