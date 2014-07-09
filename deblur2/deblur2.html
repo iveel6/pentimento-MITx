@@ -3,21 +3,25 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
         <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
         <link href='http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css' rel='stylesheet' type='text/css'>
-        <script src="http://web.mit.edu/lu16j/www/WebPentimento/generalfunctions.js"></script>
-        <script src="http://web.mit.edu/lu16j/www/WebPentimento/listeners.js"></script>
-<!--        <script src="http://web.mit.edu/lu16j/www/WebPentimento/renderer.js"></script>-->
-        <script src="../testRenderer.js"></script>
+        
         <script src="deblur2.js"></script>
-        <script src="http://web.mit.edu/lu16j/www/WebPentimento/preprocessor.js"></script>
-        <script src="http://web.mit.edu/lu16j/www/WebPentimento/player.js"></script>
-        <link href="http://web.mit.edu/lu16j/www/WebPentimento/player.css" type="text/css" rel="stylesheet">
+        
+        <script src="../renderer/generalfunctions.js"></script>
+        <script src="../renderer/listeners.js"></script>
+        <script src="../renderer/Visual.js"></script>
+        <script src="../renderer/Stroke.js"></script>
+        <script src="../renderer/Image.js"></script>
+        <script src="../renderer/PentimentoRenderer.js"></script>
+        <script src="../renderer/preprocessor.js"></script>
+        <script src="../player/player.js"></script>
+        <link href="../player/player.css" type="text/css" rel="stylesheet">
     </head>
     <body>
+        <span id='fps'>0 FPS</span>
         <div class='pentimento' data-name='deblur2'>
             <div class='lecture'>
                 <div class='canvas_container'>
                     <canvas class='video'></canvas>
-<!--                    Begin changes-->
                     <div class="chapters_view">
                         <div class="chapters_container">
                             <div class="chapters_list">
@@ -34,10 +38,9 @@
                             </svg>
                         </div>
                     </div>
-<!--                    end changes-->
                 </div>
                 <div class='onScreenStatus'>
-                    <img src='http://web.mit.edu/lu16j/www/WebPentimento/images/pause.png' id='pauseIcon' width='0px' height='0px'> </div>
+                    <img src='../images/pause.png' id='pauseIcon' width='0px' height='0px'> </div>
                 <br> <div class='captions'>test captions</div>
                 <div class='controls'>
                     <div id='slider'>
@@ -63,7 +66,7 @@
                 </div>
                 <div class='zoomRect'></div>
                 <div id='description-dialog'>
-                    <h3><img src='http://web.mit.edu/lu16j/www/WebPentimento/images/penti.png'> Pentimento Player</h3>
+                    <h3><img src='../images/penti.png'> Pentimento Player</h3>
                     <ul><li>Click on a stroke to go to that point in the video</li>
                         <li>Drag, scroll, or use arrow keys to pan around</li>
                         <li>Shift-Scroll to zoom</li>
@@ -73,19 +76,19 @@
                 </div>
                 <div class="sideButtons">
                     <button class="transBtns" id="zoomIn" title="Zoom In (+)">
-                        <img src="http://web.mit.edu/lu16j/www/WebPentimento/images/plus.png"></button>
+                        <img src="../images/plus.png"></button>
                     <button class="transBtns" id="revertPos" title="Refocus (Enter)">
-                        <img src="http://web.mit.edu/lu16j/www/WebPentimento/images/target.png"></button>
+                        <img src="../images/target.png"></button>
                     <button class="transBtns" id="seeAll" title="Big Board View (A)">
-                        <img src="http://web.mit.edu/lu16j/www/WebPentimento/images/seeall.png"></button>
+                        <img src="../images/seeall.png"></button>
                     <button class="transBtns" id="zoomOut" title="Zoom Out (-)">
-                        <img src="http://web.mit.edu/lu16j/www/WebPentimento/images/minus.png"></button>
+                        <img src="../images/minus.png"></button>
                     <button class="transBtns" id="fullscreen" title="Fullscreen (F)">
-                        <img src="http://web.mit.edu/lu16j/www/WebPentimento/images/fs.png"></button>
+                        <img src="../images/fs.png"></button>
                     <button class="transBtns" id="screenshotURL" title="Screenshot (S)">
-                        <img src="http://web.mit.edu/lu16j/www/WebPentimento/images/camera.png"></button>
+                        <img src="../images/camera.png"></button>
                     <button class="transBtns" id="timeStampURL" title="Link and Code (L)">
-                        <img src="http://web.mit.edu/lu16j/www/WebPentimento/images/link.png"></button>
+                        <img src="../images/link.png"></button>
                     <div class='URLinfo'>
                         <button id='linkbutton'>State-saved URL</button>
                         <button id='embedbutton'>Embed</button><br/>
