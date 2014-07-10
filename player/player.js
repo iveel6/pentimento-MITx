@@ -417,6 +417,7 @@ var PentimentoPlayer = function(data) {
     *
     *************************/
     function setFullscreenMode(on) {
+        //eventHandler({event: 'refocus', data: {}})
         fullscreenMode = on;
         try {
             if(on)  root[0].requestFullScreen();
@@ -467,6 +468,8 @@ var PentimentoPlayer = function(data) {
                     canvas.width = windowWidth;
                     canvas.height = ymax/xmax*canvas.width;
                 }
+              console.log(canvas.height)
+              console.log(canvas.width)
             }
             else {
                 canvas.height = windowHeight-controls.outerHeight(true);
@@ -506,12 +509,12 @@ var PentimentoPlayer = function(data) {
         var fontsize = canvas.width * 30/575;
         if (fontsize > 30 ) fontsize=30; //max font size 30
         $('.speedDisplay').css('font-size', fontsize+'px');
-        
         renderer.fire({event: 'resize'});
         renderer.renderFrame(audio.currentTime);
         listener.update({event: 'resize'});
         offset = root.find('.video').offset();
         resizeControls(canvas.width);
+        console.log('after resize', renderer.transformMatrix())
         
         var onScreenStatusWidth=canvas.width * 80/575;
         $('.onScreenStatus').css('margin-top', -canvas.height/2-onScreenStatusWidth/2);

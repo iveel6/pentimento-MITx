@@ -18,7 +18,7 @@ var PentimentoRenderer = function(canvas_container, data, resourcepath) {
     var startTime;
     var main_xscale = main_canvas.width/data.width;
     var main_yscale = main_canvas.height/data.height;
-    
+    var size = $('.video')[0].height
     // wrap all raw visual objects in wrapper renderer classes
     for (var i in data.visuals) {
         if (data.visuals[i].type === 'stroke')
@@ -63,6 +63,12 @@ var PentimentoRenderer = function(canvas_container, data, resourcepath) {
             }
         }
         else if(info.event === 'resize') {
+            console.log('old', size)
+            var f = $('.video')[0].height/size
+            size = $('.video')[0].height
+            transformMatrix.ty *= f
+            transformMatrix.tx *= f
+            console.log('new', size)
             main_xscale = main_canvas.width/data.width;
             main_yscale = main_canvas.height/data.height;
         }
@@ -256,7 +262,6 @@ var PentimentoRenderer = function(canvas_container, data, resourcepath) {
      */
     function animateToPosHelper(startTime, duration, tx, ty, tz, nx, ny, nz, info, callback, bounded) {
         clearTimeout(animateID);
-        
         if(bounded===undefined) {
             nz = Math.min(Math.max(nz,data.minZoom),data.maxZoom);
             nx = Math.min(Math.max(nx,main_canvas.width-data.boundingRect.xmax*main_xscale*nz),-data.boundingRect.xmin*main_xscale);
