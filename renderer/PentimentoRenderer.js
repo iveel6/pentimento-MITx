@@ -109,7 +109,7 @@ var PentimentoRenderer = function(canvas_container, data, resourcepath) {
         
         // render all visuals (they are all wrapped in renderer classes)
         for(var i=0; i<data.visuals.length; i++){
-            data.visuals[i].render(time, context, xscale, yscale, timeOfPreviousThumb);
+            data.visuals[i].render(time, context, xscale, yscale, timeOfPreviousThumb, transformMatrix);
         }
         
         // display FPS
@@ -138,10 +138,10 @@ var PentimentoRenderer = function(canvas_container, data, resourcepath) {
     function prepareFrame(time, canvas, context) {
         // clear the canvas
         context.setTransform(1, 0, 0, 1, 0, 0);
-        context.clearRect(0,0,canvas.width,canvas.height)
-//        context.fillStyle = 'rgba('+Math.round(data.backgroundColor.red*255)+','+
-//          Math.round(data.backgroundColor.green*255)+','+Math.round(data.backgroundColor.blue*255)+',0.5)';
-//        context.fillRect(0, 0, canvas.width, canvas.height);
+//        context.clearRect(0,0,canvas.width,canvas.height)
+        context.fillStyle = 'rgba('+Math.round(data.backgroundColor.red*255)+','+
+          Math.round(data.backgroundColor.green*255)+','+Math.round(data.backgroundColor.blue*255)+',0.5)';
+        context.fillRect(0, 0, canvas.width, canvas.height);
         
         // set the transform
         setCameraTransform(time, canvas, context);
@@ -180,7 +180,6 @@ var PentimentoRenderer = function(canvas_container, data, resourcepath) {
       var canvasR = $('#pdf')[0]
       var contextR = canvasR.getContext('2d')
 
-      //console.log(transformMatrix)
       
     }
     

@@ -28,7 +28,7 @@ var Visual = function (visual) {
      * 'timeOfPreviousThumb' is defined if rendering thumbnails; specifies the time before which
      *      strokes should be grayed out.
      */
-    function render(time, context, xscale, yscale, timeOfPreviousThumb) {
+    function render(time, context, xscale, yscale, timeOfPreviousThumb, transformMatrix) {
         if (time > visual.tMin) {
             var transform = this.getTransform(time);
             context.save();
@@ -37,7 +37,7 @@ var Visual = function (visual) {
                               transform.tx/transform.m11*xscale,
                               transform.ty/transform.m22*yscale);
             var grayout = timeOfPreviousThumb !== undefined && visual.tEndEdit < timeOfPreviousThumb;
-            this.drawSelf(time, context, xscale, yscale, grayout);
+            this.drawSelf(time, context, xscale, yscale, grayout, transformMatrix);
             context.restore();
         }
     }
