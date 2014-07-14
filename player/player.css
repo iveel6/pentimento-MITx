@@ -78,7 +78,6 @@ body{
 .video{
     border:1px solid #eee;
     cursor: default;
-    background-color: #fff;
 }
 .video.zooming{
     cursor: url('../images/magnify.cur'), -webkit-zoom-in;
