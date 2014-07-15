@@ -718,23 +718,23 @@ var PentimentoPlayer = function(data) {
 	        for(var i in data.pageFlips) { //iveel
 				var chapterThumb = $('<div class="chapters_item" id="chapter_'+i+'"><button class=extend id="extend_'+i+'">Extend</button></div>');
 				
-				var beginTime = data.pageFlips[i].time;
-				var pageBeginTime = visualToAudio(data, beginTime);
+				var begin_time = data.pageFlips[i].time;
+				var pageBeginTime = visualToAudio(data, begin_time);
 
-				var endTime = data.durationInSeconds;
-				var pageEndTime = visualToAudio(data, endTime);
+				var end_time = data.durationInSeconds;
+				var pageEndTime = visualToAudio(data, end_time);
 
 				if(i < data.pageFlips.length-1){
-					endTime = data.pageFlips[parseInt(i)+1].time;
-					pageEndTime = visualToAudio(data, endTime);
+					end_time = data.pageFlips[parseInt(i)+1].time;
+					pageEndTime = visualToAudio(data, end_time);
 				}
 				var dataURL = renderer.getThumbCanvas(192, 108, pageEndTime-GAP, pageBeginTime).toDataURL("image/png");
 				chapterThumb.append('<img id="img_'+i+'" src="'+dataURL+'">');
 
 				var obj = {
 					parent: null, 
-					beginTime:beginTime,
-					endTime: endTime, 
+					beginTime:begin_time,
+					endTime: end_time, 
 					img: dataURL,
 					page: i}
 
@@ -749,16 +749,16 @@ var PentimentoPlayer = function(data) {
 			var duration = (chap.endTime - chap.beginTime)/numExt;
 			for(var n=0; n < numExt; n++) {
 				var parent = $("#extend_"+n).data("info");
-				var beginTime =  chap.beginTime+(n-1)*duration;
-				var endTime =  chap.beginTime+n*duration;
-				var urlBegin = visualToAudio(data, beginTime);
-				var urlEnd = visualToAudio(data, endTime);
+				var begin_time =  chap.beginTime+(n-1)*duration;
+				var end_time =  chap.beginTime+n*duration;
+				var urlBegin = visualToAudio(data, begin_time);
+				var urlEnd = visualToAudio(data, end_time);
 					
 				var dataURL = renderer.getThumbCanvas(192, 108, urlEnd-GAP, urlBegin).toDataURL("image/png");
 				 var obj = {
 					parent: parent, 
-					beginTime:beginTime,
-					endTime: endTime, 
+					beginTime:begin_time,
+					endTime: end_time, 
 					img: dataURL,
 					page: n
 				 }
