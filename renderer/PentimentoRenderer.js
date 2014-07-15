@@ -8,7 +8,7 @@ var PentimentoRenderer = function(canvas_container, data, resourcepath) {
     var jq_canvas = canvas_container.find("canvas");
     var main_canvas = jq_canvas[0];
     var main_context = main_canvas.getContext('2d');
-    
+    console.log(data.minZoom)
     var freePosition = false;
     var transformMatrix = {
         m11: 1, m12: 0, m21: 0, m22: 1,
@@ -18,13 +18,15 @@ var PentimentoRenderer = function(canvas_container, data, resourcepath) {
     var startTime;
     var main_xscale = main_canvas.width/data.width;
     var main_yscale = main_canvas.height/data.height;
-    
+    var size = $('.video')[0].height
     // wrap all raw visual objects in wrapper renderer classes
     for (var i in data.visuals) {
         if (data.visuals[i].type === 'stroke')
             data.visuals[i] = new Stroke(data.visuals[i]);
         else if(data.visuals[i].type === 'image')
             data.visuals[i] = new Image(data.visuals[i], resourcepath);
+        else if(data.visuals[i].type === 'pdf')
+            data.visuals[i] = new Pdf_Wrapper(data.visuals[i], resourcepath);
         else
             console.log('Unknown type: '+data.visuals[i].type);
     }
@@ -63,6 +65,12 @@ var PentimentoRenderer = function(canvas_container, data, resourcepath) {
             }
         }
         else if(info.event === 'resize') {
+            console.log('old', size)
+            var f = $('.video')[0].height/size
+            size = $('.video')[0].height
+            transformMatrix.ty *= f
+            transformMatrix.tx *= f
+            console.log('new', size)
             main_xscale = main_canvas.width/data.width;
             main_yscale = main_canvas.height/data.height;
         }
@@ -130,9 +138,10 @@ var PentimentoRenderer = function(canvas_container, data, resourcepath) {
     function prepareFrame(time, canvas, context) {
         // clear the canvas
         context.setTransform(1, 0, 0, 1, 0, 0);
-        context.fillStyle = 'rgb('+Math.round(data.backgroundColor.red*255)+','+
-            Math.round(data.backgroundColor.green*255)+','+Math.round(data.backgroundColor.blue*255)+')';
-        context.fillRect(0, 0, canvas.width, canvas.height);
+        context.clearRect(0,0,canvas.width,canvas.height)
+//        context.fillStyle = 'rgba('+Math.round(data.backgroundColor.red*255)+','+
+//          Math.round(data.backgroundColor.green*255)+','+Math.round(data.backgroundColor.blue*255)+',0.5)';
+//        context.fillRect(0, 0, canvas.width, canvas.height);
         
         // set the transform
         setCameraTransform(time, canvas, context);
@@ -167,11 +176,12 @@ var PentimentoRenderer = function(canvas_container, data, resourcepath) {
                              transformMatrix.m21, transformMatrix.m22,
                              transformMatrix.tx, transformMatrix.ty);
         
-        // draw box showing where the camera transform is relative to the user transform
-        if(freePosition) {
-            var box = getCameraTransform(time, canvas);
-            drawBox(box.tx, box.ty, box.m11, box.m22, canvas, context);
-        }
+      
+      var canvasR = $('#pdf')[0]
+      var contextR = canvasR.getContext('2d')
+
+      //console.log(transformMatrix)
+      
     }
     
     /**
@@ -256,7 +266,6 @@ var PentimentoRenderer = function(canvas_container, data, resourcepath) {
      */
     function animateToPosHelper(startTime, duration, tx, ty, tz, nx, ny, nz, info, callback, bounded) {
         clearTimeout(animateID);
-        
         if(bounded===undefined) {
             nz = Math.min(Math.max(nz,data.minZoom),data.maxZoom);
             nx = Math.min(Math.max(nx,main_canvas.width-data.boundingRect.xmax*main_xscale*nz),-data.boundingRect.xmin*main_xscale);
