@@ -85,22 +85,53 @@ var lecture = {
 { 
 "type" : "pdf",
 'page': 1,
-"tMin":10.0,
+"tMin":300.0,
 "tEndEdit":1000,
-"doesItGetDeleted" : false,
-"tDeletion":0.000000,
+"doesItGetDeleted" : true,
+"tDeletion":500.0,
 "hyperlink": "",
 "transforms" : [
     {
-      "time" : 1.0,
+      "time" : 15.0,
+      "m11" : 1.000000, "m12" : 0.000000, "m21" : 0.000000, "m22" : 1.000000, 
+      "tx" : 0.000000, "ty" : 0.000000
+    } ],
+  "x" : 500,   "y" : 2000,
+  "w" : 1230,   "h" : 1650,
+  "fileName" : "sample_pdf.pdf" },
+{ 
+"type" : "pdf",
+'page': 3,
+"tMin":300.0,
+"tEndEdit":1000,
+"doesItGetDeleted" : true,
+"tDeletion":500.0,
+"hyperlink": "",
+"transforms" : [
+    {
+      "time" : 15.0,
+      "m11" : 1.000000, "m12" : 0.000000, "m21" : 0.000000, "m22" : 1.000000, 
+      "tx" : 0.000000, "ty" : 0.000000
+    } ],
+  "x" : 500,   "y" : 4000,
+  "w" : 1230,   "h" : 1650,
+  "fileName" : "sample_pdf.pdf" },
+{
+"type" : "video",
+"tMin":0,
+"tEndEdit":1000,
+"doesItGetDeleted" : false,
+"tDeletion":0,
+"hyperlink": "",
+"transforms" : [
+    {
+      "time" : 15.0,
       "m11" : 1.000000, "m12" : 0.000000, "m21" : 0.000000, "m22" : 1.000000, 
       "tx" : 0.000000, "ty" : 0.000000
     } ],
   "x" : 0,   "y" : 0,
-  "w" : 1230,   "h" : 1650,
-  "fileName" : "sample_pdf.pdf" },
-  
-  
+  "w" : 600,   "h" : 480,
+  "fileName" : "sample_2.m4v" },
 { 
 "type" : "image",
 "tMin":328.201416,

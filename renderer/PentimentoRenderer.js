@@ -27,7 +27,9 @@ var PentimentoRenderer = function(canvas_container, data, resourcepath) {
             data.visuals[i] = new Image(data.visuals[i], resourcepath);
         else if(data.visuals[i].type === 'pdf')
             data.visuals[i] = new Pdf_Wrapper(data.visuals[i], resourcepath);
-        else
+        else if(data.visuals[i].type === 'video')
+            data.visuals[i] = new Video(data.visuals[i], resourcepath);
+        else 
             console.log('Unknown type: '+data.visuals[i].type);
     }
     
