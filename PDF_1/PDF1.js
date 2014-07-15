@@ -118,10 +118,10 @@ var lecture = {
   "fileName" : "sample_pdf.pdf" },
 {
 "type" : "video",
-"tMin":0,
+"tMin":300,
 "tEndEdit":1000,
-"doesItGetDeleted" : false,
-"tDeletion":0,
+"doesItGetDeleted" : true,
+"tDeletion":600,
 "hyperlink": "",
 "transforms" : [
     {
@@ -129,7 +129,7 @@ var lecture = {
       "m11" : 1.000000, "m12" : 0.000000, "m21" : 0.000000, "m22" : 1.000000, 
       "tx" : 0.000000, "ty" : 0.000000
     } ],
-  "x" : 0,   "y" : 0,
+  "x" : 200,   "y" : 1800,
   "w" : 600,   "h" : 480,
   "fileName" : "sample_2.m4v" },
 { 
