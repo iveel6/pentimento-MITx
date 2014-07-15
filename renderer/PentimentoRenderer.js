@@ -8,7 +8,7 @@ var PentimentoRenderer = function(canvas_container, data, resourcepath) {
     var jq_canvas = canvas_container.find("canvas");
     var main_canvas = jq_canvas[0];
     var main_context = main_canvas.getContext('2d');
-    
+    console.log(data.minZoom)
     var freePosition = false;
     var transformMatrix = {
         m11: 1, m12: 0, m21: 0, m22: 1,
@@ -25,6 +25,8 @@ var PentimentoRenderer = function(canvas_container, data, resourcepath) {
             data.visuals[i] = new Stroke(data.visuals[i]);
         else if(data.visuals[i].type === 'image')
             data.visuals[i] = new Image(data.visuals[i], resourcepath);
+        else if(data.visuals[i].type === 'pdf')
+            data.visuals[i] = new Pdf_Wrapper(data.visuals[i], resourcepath);
         else
             console.log('Unknown type: '+data.visuals[i].type);
     }
@@ -136,9 +138,10 @@ var PentimentoRenderer = function(canvas_container, data, resourcepath) {
     function prepareFrame(time, canvas, context) {
         // clear the canvas
         context.setTransform(1, 0, 0, 1, 0, 0);
-        context.fillStyle = 'rgb('+Math.round(data.backgroundColor.red*255)+','+
-            Math.round(data.backgroundColor.green*255)+','+Math.round(data.backgroundColor.blue*255)+')';
-        context.fillRect(0, 0, canvas.width, canvas.height);
+        context.clearRect(0,0,canvas.width,canvas.height)
+//        context.fillStyle = 'rgba('+Math.round(data.backgroundColor.red*255)+','+
+//          Math.round(data.backgroundColor.green*255)+','+Math.round(data.backgroundColor.blue*255)+',0.5)';
+//        context.fillRect(0, 0, canvas.width, canvas.height);
         
         // set the transform
         setCameraTransform(time, canvas, context);
@@ -173,11 +176,12 @@ var PentimentoRenderer = function(canvas_container, data, resourcepath) {
                              transformMatrix.m21, transformMatrix.m22,
                              transformMatrix.tx, transformMatrix.ty);
         
-        // draw box showing where the camera transform is relative to the user transform
-        if(freePosition) {
-            var box = getCameraTransform(time, canvas);
-            drawBox(box.tx, box.ty, box.m11, box.m22, canvas, context);
-        }
+      
+      var canvasR = $('#pdf')[0]
+      var contextR = canvasR.getContext('2d')
+
+      //console.log(transformMatrix)
+      
     }
     
     /**

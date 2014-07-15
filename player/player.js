@@ -1,6 +1,6 @@
 var PentimentoPlayer = function(data) {
 	var GAP = 0.1;
-	var numExt = 5; //iveel
+	var numExt = 5; 
     var controls = $('.controls');
     var fullscreenMode = false;
     var controlsVisible = true;
@@ -252,9 +252,9 @@ var PentimentoPlayer = function(data) {
     *
     *************************/
     function nextChapter() {
-        for(var i=0; i<data.pageFlips.length; i++) {
-            if(visualToAudio(data, data.pageFlips[i].time) > audio.currentTime+0.5) {
-				console.log("nextChap", "data", data, "pageFlip!!!", data.pageFlips[i]); //iveel
+        for(var i=0; i<numExt; i++) {
+			var time = $("#extend_"+i).data("info").endTime;
+            if(visualToAudio(data, time) > audio.currentTime+0.5) {
                 jumpToChapter(i);
                 break;
             }
@@ -262,17 +262,17 @@ var PentimentoPlayer = function(data) {
     }
     
     function prevChapter() {
-        for(var i=data.pageFlips.length-1; i>=0; i--) {
-            if(visualToAudio(data, data.pageFlips[i].time) < audio.currentTime-2) {
-				console.log("preChap", "pageFlip!!!", data.pageFlips[i]);
+        for(var i=0; i<numExt; i++) {
+			var time = $("#extend_"+i).data("info").endTime;
+            if(visualToAudio(data, time) < audio.currentTime-2) {
                 jumpToChapter(i);
                 break;
             }
         }
     }
     //CHANGES
-    function toggleChaptersVisibility() {
-		//console.log("toggle")
+	function toggleChaptersVisibility() {
+	
         if(chaptersView.css('z-index') === '-2') {
             chaptersView.css('z-index', 0);
             chaptersView.animate({opacity: 0.95},100);
@@ -281,25 +281,15 @@ var PentimentoPlayer = function(data) {
             chaptersView.animate({opacity: 0, 'z-index': -2},100);
         }
     }
-    /*function jumpToChapter(i) {
-		console.log("jumping"); //Iveel editted
-		if (i == data.pageFlips.length-1){
-			currentTime = visualToAudio(data, Math.max(0,data.durationInSeconds-(audio.paused?0.1:0)));
-		}else{
-			currentTime = visualToAudio(data, Math.max(0,data.pageFlips[i+1].time-(audio.paused?0.1:0)));
-		}
-        audio.currentTime = currentTime;
-        changeSlider(currentTime);
-        if(audio.paused) { // draw the frame
-            renderer.renderFrame(currentTime);
-        }
-    }*/
+
 	
 	    function jumpToChapter(i) {
 			console.log("jumping"); //Iveel editted
 			var time = $("#extend_"+i).data("info").endTime-GAP;
 				console.log(time);
+			
 			var currentTime = visualToAudio(data, time);
+			console.log("current", currentTime);
 			audio.currentTime = currentTime;
 			changeSlider(currentTime);
 			if(audio.paused) { // draw the frame
@@ -445,6 +435,7 @@ var PentimentoPlayer = function(data) {
         //eventHandler({event: 'refocus', data: {}})
         fullscreenMode = on;
         try {
+			//root.find('#revertPos').click(); //to fix zooming sizing Iveel
             if(on)  root[0].requestFullScreen();
             else    document.cancelFullScreen();
         } catch(e) {
@@ -721,6 +712,7 @@ var PentimentoPlayer = function(data) {
         chaptersView.on('mousemove touchmove mousewheel', function(e) {
             e.stopPropagation();
         });
+
 		
 		
 	        for(var i in data.pageFlips) { //iveel
@@ -790,6 +782,7 @@ var PentimentoPlayer = function(data) {
 			console.log("condensing");
 			condenseRoll();	
 		});
+
 
         $('.chapters_item').on('click', function() {
             jumpToChapter(parseInt($(this).attr('id').split('_')[1]));

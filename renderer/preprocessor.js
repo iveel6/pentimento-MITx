@@ -159,7 +159,8 @@ function preprocess(data, e) {
     boundingRect.width = boundingRect.xmax-boundingRect.xmin;
     boundingRect.height = boundingRect.ymax-boundingRect.ymin;
     data.boundingRect = boundingRect;
-    data.minZoom = Math.min(data.width/boundingRect.width,data.height/boundingRect.height);
+    //data.minZoom = Math.min(data.width/boundingRect.width,data.height/boundingRect.height);
+    data.minZoom = -1000
     data.maxZoom = 4;
 }
 
