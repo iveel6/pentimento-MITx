@@ -3,10 +3,8 @@
     <head>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
         <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-        <link href='http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css' rel='stylesheet' type='text/css'>
-        
+        <link href='http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css' rel='stylesheet' type='text/css'> 
         <script src="deblur2.js"></script>
-        
         <script src="../renderer/generalfunctions.js"></script>
         <script src="../renderer/listeners.js"></script>
         <script src="../renderer/Visual.js"></script>
@@ -24,6 +22,7 @@
                 <div class='canvas_container'>
                     <canvas class='video'></canvas>
                     <div class="chapters_view">
+						<button id="condense">Condense</button>
                         <div class="chapters_container">
                             <div class="chapters_list">
                             </div>
@@ -60,8 +59,8 @@
                     <button class='volume'></button>
                     <div class='volumeSlider'></div>
                     <audio class='audio' preload='auto'>
-                        <source id='lectureAudio' src='deblur2-resources/audio.wav' type='audio/wav'>
-<!--                        <source id='lectureAudioOgg' src='deblur2-resources/audio.ogg' type='audio/mpeg'> This thing doesn't actrually exist. -->
+                        <source id='lectureAudio' src='deblur2-resources/audio.mp3' tyoe='audio/mpeg'>
+                        <source id='lectureAudioOgg' src='deblur2-resources/audio.ogg' tyoe='audio/mpeg'>
                     </audio>
                     <div class="speedDisplay"></div>
                 </div>

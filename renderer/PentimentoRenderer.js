@@ -67,12 +67,12 @@ var PentimentoRenderer = function(canvas_container, data, resourcepath) {
             }
         }
         else if(info.event === 'resize') {
-            console.log('old', size)
+            
             var f = $('.video')[0].height/size
             size = $('.video')[0].height
             transformMatrix.ty *= f
             transformMatrix.tx *= f
-            console.log('new', size)
+           
             main_xscale = main_canvas.width/data.width;
             main_yscale = main_canvas.height/data.height;
         }
