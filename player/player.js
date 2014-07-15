@@ -252,6 +252,7 @@ var PentimentoPlayer = function(data) {
     function nextChapter() {
         for(var i=0; i<data.pageFlips.length; i++) {
             if(visualToAudio(data, data.pageFlips[i].time) > audio.currentTime+0.5) {
+				console.log("nextChap");
                 jumpToChapter(i);
                 break;
             }
@@ -261,13 +262,15 @@ var PentimentoPlayer = function(data) {
     function prevChapter() {
         for(var i=data.pageFlips.length-1; i>=0; i--) {
             if(visualToAudio(data, data.pageFlips[i].time) < audio.currentTime-2) {
+				console.log("preChap");
                 jumpToChapter(i);
                 break;
             }
         }
     }
     //CHANGES
-    function toggleChaptersVisibility() {
+    function toggleChaptersVisibility() { //iveel
+		console.log("chapView", chaptersView );
         if(chaptersView.css('z-index') === '-2') {
             chaptersView.css('z-index', 0);
             chaptersView.animate({opacity: 0.95},100);
@@ -419,6 +422,7 @@ var PentimentoPlayer = function(data) {
     function setFullscreenMode(on) {
         fullscreenMode = on;
         try {
+			//root.find('#revertPos').click(); //to fix zooming sizing Iveel
             if(on)  root[0].requestFullScreen();
             else    document.cancelFullScreen();
         } catch(e) {
@@ -694,7 +698,7 @@ var PentimentoPlayer = function(data) {
         chaptersView.on('mousemove touchmove mousewheel', function(e) {
             e.stopPropagation();
         });
-        for(var i in data.pageFlips) {
+        for(var i in data.pageFlips) { //iveel
             var chapterThumb = $('<div class="chapters_item" id="chapter_'+i+'"></div>');
             var pageBeginTime = visualToAudio(data, data.pageFlips[i].time);
             var pageEndTime = data.durationInSeconds;
