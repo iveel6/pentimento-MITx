@@ -28,9 +28,12 @@ var PentimentoRenderer = function(canvas_container, data, resourcepath) {
         else if(data.visuals[i].type === 'pdf')
             data.visuals[i] = new Pdf_Wrapper(data.visuals[i], resourcepath);
         else if(data.visuals[i].type === 'video')
-            data.visuals[i] = new Video(data.visuals[i], resourcepath);
-        else 
+            data.visuals[i] = new Pentimento_video(data.visuals[i], resourcepath);
+        else
             console.log('Unknown type: '+data.visuals[i].type);
+    }
+    for (var i in data.audios){
+            Pentimento_audio(data.audios[i], resourcepath)
     }
     
     /**
