@@ -182,8 +182,7 @@ var PentimentoRenderer = function(canvas_container, data, resourcepath) {
                              transformMatrix.tx, transformMatrix.ty);
         
       
-      var canvasR = $('#pdf')[0]
-      var contextR = canvasR.getContext('2d')
+   
 
       
     }

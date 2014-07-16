@@ -284,12 +284,8 @@ var PentimentoPlayer = function(data) {
 
 	
 	    function jumpToChapter(i) {
-			console.log("jumping"); //Iveel editted
 			var time = $("#extend_"+i).data("info").endTime-GAP;
-				console.log(time);
-			
 			var currentTime = visualToAudio(data, time);
-			console.log("current", currentTime);
 			audio.currentTime = currentTime;
 			changeSlider(currentTime);
 			if(audio.paused) { // draw the frame
@@ -626,6 +622,34 @@ var PentimentoPlayer = function(data) {
             }
                     //only call if it was a user-induced change, not program-induced
         });
+		
+		//thumbnail over timeline
+		$('#slider').on("mousemove", function(evt) {
+			var posX = evt.clientX - $(this).offset().left;
+			var sliderW = $(this).width();
+			var thumb_time = posX/sliderW*endTime;
+			var dataURL = renderer.getThumbCanvas(192, 108, thumb_time).toDataURL("image/png");
+			
+			$(".thumb_img")
+			.show()
+			.css("margin-left", function(){
+				var halfW = $(this).width()/2;
+				if (halfW > posX){
+					return 3+"px";
+				}else if(halfW > sliderW - posX){
+					return sliderW-2*halfW-3+"px";
+				}else{
+					return posX-halfW+"px";
+				}
+			})
+			.attr("src", dataURL);
+		});
+		
+		$('#slider').on("mouseout", function() {
+			$(".thumb_img").hide();
+		});
+		
+		
         $('#slider').find('.ui-slider-range').removeClass('ui-corner-all');
         
         // about modal dialog
@@ -741,7 +765,6 @@ var PentimentoPlayer = function(data) {
 				chapterThumb.append('<span>'+data.pageFlips[i].page+'</span>');
 				$('.chapters_list').append(chapterThumb);
 				$('#extend_'+i).data("info", obj);
-				//console.log(obj, $('#extend_'+i).data('info'));
 			}
 		
 		function extendRoll(i){
@@ -770,7 +793,6 @@ var PentimentoPlayer = function(data) {
 		function condenseRoll(){
 			if ($("#extend_0").data("info").parent != null){
 				for(var n=0; n < numExt; n++){
-					console.log($("#extend_0").data('info'))
 					var parent = $("#extend_"+n).data("info").parent;
 					$("#extend_"+n).data("info",parent) ; 
 					$("#img_"+n).attr("src",parent.img);
@@ -779,7 +801,6 @@ var PentimentoPlayer = function(data) {
 		}
 		
 		$('#condense').on('click', function() {
-			console.log("condensing");
 			condenseRoll();	
 		});
 
@@ -788,10 +809,8 @@ var PentimentoPlayer = function(data) {
             jumpToChapter(parseInt($(this).attr('id').split('_')[1]));
         });
 		
-		$('.extend').on('click', function() {  //iveel
-			console.log("extending", $(this));
+		$('.extend').on('click', function() {  
 			var thPage = $(this).data("info").page;
-			console.log("page", thPage);
 			extendRoll(thPage);
 
 			
