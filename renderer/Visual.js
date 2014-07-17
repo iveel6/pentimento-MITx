@@ -10,7 +10,19 @@ var Visual = function (visual) {
         return visual.properties[visual.properties.length-1];
     }
     this.getProperty = getProperty;
+  
+    //this is used to determine whether this visual is new in between two frames.
+    function isBetweenTime(time1, time2){
+        return visual.tMin > time1 && visual.tMin < time2
+    }
+    this.isBetweenTime = isBetweenTime;
     
+    //this is used to see if the visual updates itself. 
+    //as of 7/17/2014, only videos do.
+    function getType(){
+        return visual.type
+    }
+    this.getType = getType;
     /**
      * Get the current transform of the visual
      */
