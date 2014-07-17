@@ -81,6 +81,12 @@ var lecture = {
    {"tAudio": 1450.626343,  "tVisual": 1460.399780},
    {"tAudio": 1450.895752,  "tVisual": 1460.919189},
    {"tAudio": 1452.308960,  "tVisual": 1462.332886}],
+"audios":  [{
+"type" : "flac",
+"offset": 240,
+"doesItGetDeleted" : false,
+"tDeletion":0,
+"fileName" : "sample_audio2.mp3" }],
 "visuals": [
 { 
 "type" : "pdf",
@@ -123,6 +129,7 @@ var lecture = {
 "doesItGetDeleted" : true,
 "tDeletion":600,
 "hyperlink": "",
+"audioEnabled": false,
 "transforms" : [
     {
       "time" : 15.0,

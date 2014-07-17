@@ -1,11 +1,21 @@
-var Video = function (visual, resourcepath) {
+var Pentimento_video = function (visual, resourcepath) {
     $.extend(this, new Visual(visual));
-    var videoObj = $('<video muted>')[0];
+    var videoObj = $('<video>')[0];
     var audio = $('audio')[0] //this is the audio to sync up with.
     videoObj.src = resourcepath + visual.fileName;
+      audio.addEventListener('pause',function(){
+        videoObj.pause();})
+      audio.addEventListener('play',function(){
+        if(shouldPlay(audio.currentTime)){
+          videoObj.play();}
+        })
+    videoObj.muted = true;
+    if (visual.audioEnabled){
+      videoObj.muted = false;
+    }
   
     this.drawSelf = function (time, context, xscale, yscale) {
-      if(!visual.doesItGetDeleted || time < visual.tDeletion){
+      if((!visual.doesItGetDeleted || time < visual.tDeletion) && time>visual.tMin){
         /*setting the videoObj.currentTime is SLOW like REALLY SLOW like 3FPS slow 
         so it is infeasible to draw the video frame at the exact time as specified by the drawself function
         for smooth display it is necessary for the browser to JUST PLAY THE VIDEO and copy the video on to the canvas
@@ -25,17 +35,15 @@ var Video = function (visual, resourcepath) {
             var h = visual.h*yscale;
             context.drawImage(videoObj, x,y,w,h);
           }
+        }else{
+          videoObj.pause();
         }
       }
-  //takes the raw video time, converts to audio time,multiplies by 30 and rounds. 
-  function getFrame(time){
-    var mT = Math.min(visualToAudio(lecture, time) - visualToAudio(lecture,visual.tMin), videoObj.duration);
-    var rt = Math.round(mT*30.0);
-    return rt;
-  }
-
   //returns the real time of the video.
   function getTime(time){
-    return getFrame(time)/30.0;
+    return Math.min(visualToAudio(lecture, time) - visualToAudio(lecture,visual.tMin), videoObj.duration);
+  }
+  function shouldPlay(currentTime){
+    return (currentTime > visualToAudio(lecture, visual.tMin)) && (currentTime > visualToAudio(lecture, visual.tMin) + videoObj.duration)
   }
 }
