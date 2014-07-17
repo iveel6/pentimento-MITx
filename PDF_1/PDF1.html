@@ -14,6 +14,7 @@
         <script src="../renderer/Image.js"></script>
         <script src="../renderer/Video.js"></script>
         <script src="../renderer/Audio.js"></script>
+        <script src="../renderer/Iframe.js"></script>
         <script src="../renderer/PentimentoRenderer.js"></script>
         <script src="../renderer/preprocessor.js"></script>
         <script src="../player/player.js"></script>
@@ -32,8 +33,8 @@
         <div class='pentimento' data-name='PDF1'>
             <div class='lecture'>
                 <div class='canvas_container'>
-                    <canvas class='video' id = 'main_canvas' style = 'position: absolute; z-index: 2;'></canvas>
-                    <canvas id= 'pdf' style="position: absolute; z-index: 1; display:none"></canvas>
+                    <canvas class='video' id = 'main_canvas' style = 'position: absolute; z-index: 3;'></canvas>
+                    <canvas id= 'background_canvas' style="position: absolute; z-index: 1;"></canvas>
                     <canvas id = 'pdf_cache' style = 'display: none'></canvas>
                     <div class="chapters_view">
                         <div class="chapters_container">

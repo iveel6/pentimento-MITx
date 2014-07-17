@@ -5,7 +5,6 @@ var Pentimento_audio = function(info, resourcepath){
   var audioM = $('audio')[0]
   audioM.addEventListener('timeupdate', function(e){
     if (audioObj.paused && shouldPlay()){
-      setPlaytime()
       audioObj.play()
     }
   })
@@ -25,7 +24,7 @@ var Pentimento_audio = function(info, resourcepath){
   })
   
   function shouldPlay(){
-    return (audioM.currentTime > (audioObj.currentTime + info.offset)) && (audioM.currentTime < (info.offset + audioObj.duration))
+    return (audioM.currentTime > (info.offset)) && (audioM.currentTime < (info.offset + audioObj.duration)) && !audioM.paused
   }
   
   function setPlaytime(){

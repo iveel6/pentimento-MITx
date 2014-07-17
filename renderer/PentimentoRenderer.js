@@ -8,7 +8,8 @@ var PentimentoRenderer = function(canvas_container, data, resourcepath) {
     var jq_canvas = canvas_container.find("canvas");
     var main_canvas = jq_canvas[0];
     var main_context = main_canvas.getContext('2d');
-    console.log(data.minZoom)
+    var background_canvas = $('#background_canvas')[0];
+    var background_context = background_canvas.getContext('2d');
     var freePosition = false;
     var transformMatrix = {
         m11: 1, m12: 0, m21: 0, m22: 1,
@@ -29,6 +30,8 @@ var PentimentoRenderer = function(canvas_container, data, resourcepath) {
             data.visuals[i] = new Pdf_Wrapper(data.visuals[i], resourcepath);
         else if(data.visuals[i].type === 'video')
             data.visuals[i] = new Pentimento_video(data.visuals[i], resourcepath);
+        else if(data.visuals[i].type === 'iframe')
+            data.visuals[i] = new Pentimento_iframe(data.visuals[i])
         else
             console.log('Unknown type: '+data.visuals[i].type);
     }
@@ -144,12 +147,26 @@ var PentimentoRenderer = function(canvas_container, data, resourcepath) {
         // clear the canvas
         context.setTransform(1, 0, 0, 1, 0, 0);
         context.clearRect(0,0,canvas.width,canvas.height)
-        context.fillStyle = 'rgba('+Math.round(data.backgroundColor.red*255)+','+
-          Math.round(data.backgroundColor.green*255)+','+Math.round(data.backgroundColor.blue*255)+',0.5)';
-        context.fillRect(0, 0, canvas.width, canvas.height);
-        
+        // patch. this reduces workload by not filling the background every frame.
+        if(canvas.id = 'main_canvas'){
+          fillBackground();
+        }else{
+          context.fillStyle = 'rgb('+Math.round(data.backgroundColor.red*255)+','+
+          Math.round(data.backgroundColor.green*255)+','+Math.round(data.backgroundColor.blue*255)+')';
+          context.fillRect(0, 0, canvas.width, canvas.height)
+        }
         // set the transform
         setCameraTransform(time, canvas, context);
+    }
+  
+    function fillBackground(){
+      if (background_canvas.width != main_canvas.width && background_canvas.height != main_canvas.height){
+        background_canvas.width = main_canvas.width
+        background_canvas.height = main_canvas.height
+        background_context.fillStyle = 'rgb('+Math.round(data.backgroundColor.red*255)+','+
+          Math.round(data.backgroundColor.green*255)+','+Math.round(data.backgroundColor.blue*255)+')';
+        background_context.fillRect(0, 0, background_canvas.width, background_canvas.height);
+      }
     }
     
     /**

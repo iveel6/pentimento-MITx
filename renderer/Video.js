@@ -9,13 +9,10 @@ var Pentimento_video = function (visual, resourcepath) {
         if(shouldPlay(audio.currentTime)){
           videoObj.play();}
         })
-    videoObj.muted = true;
-    if (visual.audioEnabled){
-      videoObj.muted = false;
-    }
+    videoObj.muted = !visual.audioEnabled;
   
     this.drawSelf = function (time, context, xscale, yscale) {
-      if((!visual.doesItGetDeleted || time < visual.tDeletion) && time>visual.tMin){
+      if((!visual.doesItGetDeleted || time < visual.tDeletion) && time>visual.tMin && context.canvas.id == 'main_canvas'){
         /*setting the videoObj.currentTime is SLOW like REALLY SLOW like 3FPS slow 
         so it is infeasible to draw the video frame at the exact time as specified by the drawself function
         for smooth display it is necessary for the browser to JUST PLAY THE VIDEO and copy the video on to the canvas
