@@ -140,9 +140,11 @@ var lecture = {
   "w" : 1200,   "h" : 1200},
 {
 "type" : "video",
-"tMin":300,
+"tMin": 0,
+"starttime":180,
 "tEndEdit":1000,
 "doesItGetDeleted" : true,
+"loop": false,
 "tDeletion":600,
 "hyperlink": "",
 "audioEnabled": false,
