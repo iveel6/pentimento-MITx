@@ -1,6 +1,7 @@
 var PentimentoPlayer = function(data) {
 	var GAP = 0.1;
 	var numExt = 5; 
+	var thumbnail_width = $("#thumbnail_container").width();
     var controls = $('.controls');
     var fullscreenMode = false;
     var controlsVisible = true;
@@ -623,30 +624,36 @@ var PentimentoPlayer = function(data) {
                     //only call if it was a user-induced change, not program-induced
         });
 		
-		//thumbnail over timeline
+		//show thumbnail over timeline
 		$('#slider').on("mousemove", function(evt) {
-			var posX = evt.clientX - $(this).offset().left;
+			var thumb_posX = evt.clientX - $(this).offset().left;
 			var sliderW = $(this).width();
-			var thumb_time = posX/sliderW*endTime;
+			var thumb_time = thumb_posX/sliderW*endTime;
+			var thumb_distX;
+			
+			if (thumbnail_width/2 > thumb_posX){
+				 thumb_distX = 1+"px";
+			}else if(thumbnail_width/2 > sliderW - thumb_posX){
+				thumb_distX = sliderW-thumbnail_width-1+"px";
+			}else{
+				thumb_distX = thumb_posX-thumbnail_width/2+"px";
+			} 
+			
 			var dataURL = renderer.getThumbCanvas(192, 108, thumb_time).toDataURL("image/png");
 			
-			$(".thumb_img")
-			.show()
-			.css("margin-left", function(){
-				var halfW = $(this).width()/2;
-				if (halfW > posX){
-					return 3+"px";
-				}else if(halfW > sliderW - posX){
-					return sliderW-2*halfW-3+"px";
-				}else{
-					return posX-halfW+"px";
-				}
-			})
-			.attr("src", dataURL);
+			var thumb_min = Math.floor(thumb_time/60);
+			var thumb_sec = Math.floor(thumb_time-thumb_min*60);
+		
+			$("#thumbnail_container")
+				.show()
+				.css("margin-left", thumb_distX);
+			$(".thumb_img").attr("src", dataURL);
+			$("#thumbnail_time").html(thumb_min+":"+thumb_sec);
 		});
 		
+		//hide thumbnail when it leaves timeline
 		$('#slider').on("mouseout", function() {
-			$(".thumb_img").hide();
+			$("#thumbnail_container").hide();
 		});
 		
 		
