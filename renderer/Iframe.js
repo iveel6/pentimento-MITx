@@ -8,6 +8,12 @@ var Pentimento_iframe = function(visual){
   $(iframe).css('display', 'none')
   $('.canvas_container').append(iframe)
   $('#main_canvas').css('pointer-events','none')
+
+  function checkbounds(a,b){
+    return true
+  }
+  this.checkbounds = checkbounds;
+  
   this.drawSelf = function (time, context, xscale, yscale,greyout, transformMatrix) {
     //don't draw/adjust webpage on thumb canvas.
     if(context.canvas.id == 'main_canvas'){

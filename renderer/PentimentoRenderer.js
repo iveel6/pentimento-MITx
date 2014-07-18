@@ -20,7 +20,7 @@ var PentimentoRenderer = function(canvas_container, data, resourcepath) {
     var fastRenderFrames = 0;
     var timeOfLastUpdate = 0;
     var framesInSeconds = 0;
-    var QUALITY_INDEX = 3; //make this higher for higher performance and lower quality
+    var QUALITY_INDEX = 5; //make this higher for higher performance and lower quality
                            //make this 0 for maximized quality and should be identical to the old rendering
                            //at the current iteration of 7/18/2014, also affects the FPS of embedded videos (Max_FPS = 60/(1+quality))
                            //setting this from 0 to 5 resulted on a 50% increase in performance.

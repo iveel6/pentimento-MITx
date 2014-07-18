@@ -22,6 +22,11 @@ var Visual = function (visual) {
     function getType(){
         return visual.type
     }
+  
+    function checkbounds(context, tM){
+        return (tM.ty + visual.y * tM.m22)>0 && (tM.tx + visual.x * tM.m11)>0
+    }
+    this.checkbounds = checkbounds;
     this.getType = getType;
     /**
      * Get the current transform of the visual
@@ -41,7 +46,7 @@ var Visual = function (visual) {
      *      strokes should be grayed out.
      */
     function render(time, context, xscale, yscale, timeOfPreviousThumb, transformMatrix) {
-        if (time > visual.tMin) {
+        if (time > visual.tMin && this.checkbounds(context, transformMatrix)) {
             var transform = this.getTransform(time);
             context.save();
             context.transform(transform.m11, transform.m12,
