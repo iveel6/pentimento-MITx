@@ -8,12 +8,15 @@ var PentimentoRenderer = function(canvas_container, data, resourcepath) {
     var jq_canvas = canvas_container.find("canvas");
     var main_canvas = jq_canvas[0];
     var main_context = main_canvas.getContext('2d');
-    console.log(data.minZoom)
+    var background_canvas = $('#background_canvas')[0];
+    var background_context = background_canvas.getContext('2d');
     var freePosition = false;
     var transformMatrix = {
         m11: 1, m12: 0, m21: 0, m22: 1,
         tx: 0, ty: 0
     };
+    var prevtransformMatrix = {};
+    var prevTime;
     var animateID;
     var startTime;
     var main_xscale = main_canvas.width/data.width;
@@ -29,6 +32,8 @@ var PentimentoRenderer = function(canvas_container, data, resourcepath) {
             data.visuals[i] = new Pdf_Wrapper(data.visuals[i], resourcepath);
         else if(data.visuals[i].type === 'video')
             data.visuals[i] = new Pentimento_video(data.visuals[i], resourcepath);
+        else if(data.visuals[i].type === 'iframe')
+            data.visuals[i] = new Pentimento_iframe(data.visuals[i])
         else
             console.log('Unknown type: '+data.visuals[i].type);
     }
@@ -107,16 +112,22 @@ var PentimentoRenderer = function(canvas_container, data, resourcepath) {
             freePosition = false;
             prepareFrame(time, canvas, context);
             freePosition = initialFree;
+            fullRender(time,context,xscale,yscale,timeOfPreviousThumb);
         }
         else {
-            prepareFrame(time, canvas, context);
+            if (JSON.stringify(prevtransformMatrix) == JSON.stringify(transformMatrix)){
+              console.log('fast render')
+              fastRender(time, prevTime, context, xscale, yscale, timeOfPreviousThumb)
+            }else{
+              console.log('full render')
+              prepareFrame(time,canvas,context);
+              fullRender(time,context, xscale, yscale, timeOfPreviousThumb);
+            }
+            prevTime = time;
+            //sigh, passing by reference.
+            prevtransformMatrix = $.extend({},transformMatrix);;
         }
-        
-        // render all visuals (they are all wrapped in renderer classes)
-        for(var i=0; i<data.visuals.length; i++){
-            data.visuals[i].render(time, context, xscale, yscale, timeOfPreviousThumb, transformMatrix);
-        }
-        
+
         // display FPS
         if (!isThumb) {
             var timeOfThisFrame = Date.now();
@@ -127,6 +138,27 @@ var PentimentoRenderer = function(canvas_container, data, resourcepath) {
     }
     this.renderFrame = renderFrame;
     
+    /*
+     * renders only the new visuals between the two times
+     * called when the transform matrix doesn't change (the old stuff is still useful.)
+     */
+    function fastRender(time, previoustime, context, xscale, yscale, timeOfPreviousThumb){
+      for(var i=0; i<data.visuals.length; i++){
+        if (data.visuals[i].isBetweenTime(previoustime, time) || data.visuals[i].getType() == 'video' || data.visuals[i].getType == 'pdf'){
+          data.visuals[i].render(time, context, xscale, yscale, timeOfPreviousThumb, transformMatrix);
+        }
+      }
+    }
+    /*
+     *renders all the visuals.
+     *called after the transformMatrix changes.
+     */ 
+    
+    function fullRender(time, context, xscale, yscale, timeOfPreviousThumb){
+      for(var i=0; i<data.visuals.length; i++){
+        data.visuals[i].render(time, context, xscale, yscale, timeOfPreviousThumb, transformMatrix);
+      }
+    }
     /**
      * Returns a jQuery-wrapped canvas of the specified size rendered with a frame
      * at the specified time.
@@ -144,12 +176,26 @@ var PentimentoRenderer = function(canvas_container, data, resourcepath) {
         // clear the canvas
         context.setTransform(1, 0, 0, 1, 0, 0);
         context.clearRect(0,0,canvas.width,canvas.height)
-        context.fillStyle = 'rgba('+Math.round(data.backgroundColor.red*255)+','+
-          Math.round(data.backgroundColor.green*255)+','+Math.round(data.backgroundColor.blue*255)+',0.5)';
-        context.fillRect(0, 0, canvas.width, canvas.height);
-        
+        // patch. this reduces workload by not filling the background every frame.
+        if(canvas.id = 'main_canvas'){
+          fillBackground();
+        }else{
+          context.fillStyle = 'rgb('+Math.round(data.backgroundColor.red*255)+','+
+          Math.round(data.backgroundColor.green*255)+','+Math.round(data.backgroundColor.blue*255)+')';
+          context.fillRect(0, 0, canvas.width, canvas.height)
+        }
         // set the transform
         setCameraTransform(time, canvas, context);
+    }
+  
+    function fillBackground(){
+      if (background_canvas.width != main_canvas.width && background_canvas.height != main_canvas.height){
+        background_canvas.width = main_canvas.width
+        background_canvas.height = main_canvas.height
+        background_context.fillStyle = 'rgb('+Math.round(data.backgroundColor.red*255)+','+
+          Math.round(data.backgroundColor.green*255)+','+Math.round(data.backgroundColor.blue*255)+')';
+        background_context.fillRect(0, 0, background_canvas.width, background_canvas.height);
+      }
     }
     
     /**

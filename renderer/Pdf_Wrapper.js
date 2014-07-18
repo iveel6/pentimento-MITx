@@ -77,7 +77,7 @@ var Pdf_Wrapper = function(visual, resourcepath){
         var y = visual.y*yscale;
         var w = visual.w*xscale;
         var h = visual.h*yscale;
-        if(!visual.doesItGetDeleted || time < visual.tDeletion){
+        if(!visual.doesItGetDeleted || time < visual.tDeletion && context.canvas.id == 'main_canvas'){
               context.drawImage(canvasC,x,y,w,h)
             //option A. rerender every time the scale changes. higher quality, low proformance.
        //     if (transformMatrix.m11 != oldscale){

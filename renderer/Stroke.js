@@ -11,6 +11,12 @@ var Stroke = function (visual) {
      * Draws itself according to 'time' on 'context', with the specified 'xscale' and 'yscale' ratios.
      * 'grayout' is defined to be true by the Visual superclass if this stroke should be grayed out.
      */
+  
+    this.isBetweenTime = function isBetweenTime(time1, time2){
+      var firsttime = visual.tMin;
+      var lasttime = visual.vertices[visual.vertices.length - 1].t
+      return !(time1 > lasttime || time2<firsttime)
+    }
     function drawSelf(time, context, xscale, yscale, grayout) {
         
         var deleted = false;

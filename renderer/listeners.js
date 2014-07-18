@@ -4,7 +4,7 @@
  */
 var PentimentoListener = function(canvas_container, data, listener) {
     var jqcanvas = canvas_container.find("canvas");
-    var canvas = jqcanvas[0];
+    var canvas = jqcanvas[1];
     var context = canvas.getContext('2d');
     
     var xscale = canvas.width/data.width;

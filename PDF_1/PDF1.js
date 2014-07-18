@@ -122,11 +122,29 @@ var lecture = {
   "x" : 500,   "y" : 4000,
   "w" : 1230,   "h" : 1650,
   "fileName" : "sample_pdf.pdf" },
+{ 
+"type" : "iframe",
+"src": "https://rawgit.com/changt/Knapsnack/master/knapsnack.html",
+"tMin": 10.0,
+"tEndEdit":1000,
+"doesItGetDeleted" : false,
+"tDeletion":0,
+"hyperlink": "",
+"transforms" : [
+    {
+      "time" : 15.0,
+      "m11" : 1.000000, "m12" : 0.000000, "m21" : 0.000000, "m22" : 1.000000, 
+      "tx" : 0.000000, "ty" : 0.000000
+    } ],
+  "x" :300,   "y" : 600,
+  "w" : 1200,   "h" : 1200},
 {
 "type" : "video",
-"tMin":300,
+"tMin": 0,
+"starttime":180,
 "tEndEdit":1000,
 "doesItGetDeleted" : true,
+"loop": false,
 "tDeletion":600,
 "hyperlink": "",
 "audioEnabled": false,
