@@ -21,11 +21,6 @@ body{
 	top:-120px;
 }
 
-.thumb_img{
-	background-color: white;
-	height:100%;		
-}
-
 #thumbnail_time{
 	position:absolute;
 	margin-left: 85px;
@@ -36,7 +31,7 @@ body{
 .canvas_container {
     overflow: hidden;
     position: relative;
-	z-index: 10;
+	
 }
 .chapters_view {
     position: relative;
@@ -90,6 +85,10 @@ body{
 }
 .chapter_nav:hover {
     opacity: 0.7;
+}
+
+.chapter_nav > svg{
+	width: 20px;
 }
 .right {
     left: 90%;

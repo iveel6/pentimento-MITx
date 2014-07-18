@@ -1,7 +1,8 @@
 var PentimentoPlayer = function(data) {
-	var GAP = 0.1;
-	var numExt = 5; 
-	var thumbnail_width = $("#thumbnail_container").width();
+    var GAP = 0.1;
+    var numExpansion = data.pageFlips.length; 
+	var thumbnail_container = $("#thumbnail_container");
+	var thumbnail_width = thumbnail_container.width();
     var controls = $('.controls');
     var fullscreenMode = false;
     var controlsVisible = true;
@@ -56,11 +57,11 @@ var PentimentoPlayer = function(data) {
     *   
     *************************/
     function graphData(){
-		currentTime=audio.currentTime;
-		changeSlider(currentTime);
+        currentTime=audio.currentTime;
+        changeSlider(currentTime);
         renderer.renderFrame(currentTime);
         draw = window.requestAnimationFrame(graphData);
-	}
+    }
     
     /*************************
     *
@@ -179,11 +180,10 @@ var PentimentoPlayer = function(data) {
                 var percentage = (furthestpoint)/endTime * 100;
                 $('.tick').css('width',percentage+'%');
             }
-            
             //updates time display
             var secondsPassed=parseFloat(current);
             root.find('.time').html(secondsToTimestamp(secondsPassed));
-            root.find('#totalTime').html(secondsToTimestamp(secondsPassed)+" / ");
+            root.find('#totalTime').html(secondsToTimestamp(secondsPassed)+" / ");  
             root.find('#totalTime').append(secondsToTimestamp(endTime));
             
             //updates listener
@@ -202,7 +202,7 @@ var PentimentoPlayer = function(data) {
     *************************/
     function secondsToTimestamp(totalseconds){
         var minutes=Math.floor(totalseconds/60);
-        var seconds=Math.round(totalseconds - minutes * 60);
+        var seconds=Math.floor(totalseconds - minutes * 60);
         var zeros='';
         if (seconds < 10) zeros='0'; //adds zero for stuff like 01, 02 , etc
         return minutes +":"+zeros+seconds;
@@ -253,8 +253,8 @@ var PentimentoPlayer = function(data) {
     *
     *************************/
     function nextChapter() {
-        for(var i=0; i<numExt; i++) {
-			var time = $("#extend_"+i).data("info").endTime;
+        for(var i=0; i<numExpansion; i++) {
+            var time = $("#expand_"+i).data("info").endTime;
             if(visualToAudio(data, time) > audio.currentTime+0.5) {
                 jumpToChapter(i);
                 break;
@@ -263,8 +263,8 @@ var PentimentoPlayer = function(data) {
     }
     
     function prevChapter() {
-        for(var i=0; i<numExt; i++) {
-			var time = $("#extend_"+i).data("info").endTime;
+        for(var i=0; i<numExpansion; i++) {
+            var time = $("#expand_"+i).data("info").endTime;
             if(visualToAudio(data, time) < audio.currentTime-2) {
                 jumpToChapter(i);
                 break;
@@ -272,8 +272,8 @@ var PentimentoPlayer = function(data) {
         }
     }
     //CHANGES
-	function toggleChaptersVisibility() {
-	
+    function toggleChaptersVisibility() {
+    
         if(chaptersView.css('z-index') === '-2') {
             chaptersView.css('z-index', 0);
             chaptersView.animate({opacity: 0.95},100);
@@ -283,19 +283,19 @@ var PentimentoPlayer = function(data) {
         }
     }
 
-	
-	    function jumpToChapter(i) {
-			var time = $("#extend_"+i).data("info").endTime-GAP;
-			var currentTime = visualToAudio(data, time);
-			audio.currentTime = currentTime;
-			changeSlider(currentTime);
-			if(audio.paused) { // draw the frame
-				renderer.renderFrame(currentTime);
-			}
+    
+        function jumpToChapter(i) {
+            var time = $("#expand_"+i).data("info").endTime-GAP;
+            var currentTime = visualToAudio(data, time);
+            audio.currentTime = currentTime;
+            changeSlider(currentTime);
+            if(audio.paused) { // draw the frame
+                renderer.renderFrame(currentTime);
+            }
     }
-	
-	
-	
+    
+    
+    
     
     var chapterScrollID;
         
@@ -432,7 +432,6 @@ var PentimentoPlayer = function(data) {
         //eventHandler({event: 'refocus', data: {}})
         fullscreenMode = on;
         try {
-			//root.find('#revertPos').click(); //to fix zooming sizing Iveel
             if(on)  root[0].requestFullScreen();
             else    document.cancelFullScreen();
         } catch(e) {
@@ -623,40 +622,35 @@ var PentimentoPlayer = function(data) {
             }
                     //only call if it was a user-induced change, not program-induced
         });
-		
-		//show thumbnail over timeline
-		$('#slider').on("mousemove", function(evt) {
-			var thumb_posX = evt.clientX - $(this).offset().left;
-			var sliderW = $(this).width();
-			var thumb_time = thumb_posX/sliderW*endTime;
-			var thumb_distX;
-			
-			if (thumbnail_width/2 > thumb_posX){
-				 thumb_distX = 1+"px";
-			}else if(thumbnail_width/2 > sliderW - thumb_posX){
-				thumb_distX = sliderW-thumbnail_width-1+"px";
-			}else{
-				thumb_distX = thumb_posX-thumbnail_width/2+"px";
-			} 
-			
-			var dataURL = renderer.getThumbCanvas(192, 108, thumb_time).toDataURL("image/png");
-			
-			var thumb_min = Math.floor(thumb_time/60);
-			var thumb_sec = Math.floor(thumb_time-thumb_min*60);
-		
-			$("#thumbnail_container")
-				.show()
-				.css("margin-left", thumb_distX);
-			$(".thumb_img").attr("src", dataURL);
-			$("#thumbnail_time").html(thumb_min+":"+thumb_sec);
-		});
-		
-		//hide thumbnail when it leaves timeline
-		$('#slider').on("mouseout", function() {
-			$("#thumbnail_container").hide();
-		});
-		
-		
+        
+        //show thumbnail over timeline
+        $('#slider').on("mousemove", function(evt) {
+            var thumb_posX = evt.clientX - $(this).offset().left;
+            var sliderW = $(this).width();
+            var thumb_time = thumb_posX/sliderW*endTime;
+            var thumb_distX;
+            
+			//computing position of thumbnail box
+            if (thumbnail_width/2 > thumb_posX){
+                 thumb_distX = 1+"px";
+            }else if(thumbnail_width/2 > sliderW - thumb_posX){
+                thumb_distX = sliderW-thumbnail_width-1+"px";
+            }else{
+                thumb_distX = thumb_posX-thumbnail_width/2+"px";
+            } 
+			thumbnail_renderer.renderFrame(thumb_time);               
+            $("#thumbnail_container")
+                .show()
+                .css("margin-left", thumb_distX);
+            $("#thumbnail_time").html(secondsToTimestamp(thumb_time));
+        });
+        
+        //hide thumbnail when it leaves timeline
+        $('#slider').on("mouseout", function() {
+            $("#thumbnail_container").hide();
+        });
+        
+        
         $('#slider').find('.ui-slider-range').removeClass('ui-corner-all');
         
         // about modal dialog
@@ -711,6 +705,7 @@ var PentimentoPlayer = function(data) {
         root.find('.prevChapter').on('click', prevChapter);
         
         renderer = new PentimentoRenderer(canvas_container, data, resourcepath);
+		thumbnail_renderer = new PentimentoRenderer(thumbnail_container, data, resourcepath); 
         listener = new PentimentoListener(canvas_container, data, eventHandler);
         
         // BEGIN CHANGES
@@ -744,84 +739,90 @@ var PentimentoPlayer = function(data) {
             e.stopPropagation();
         });
 
-		
-		
-	        for(var i in data.pageFlips) { //iveel
-				var chapterThumb = $('<div class="chapters_item" id="chapter_'+i+'"><button class=extend id="extend_'+i+'">Extend</button></div>');
-				
-				var begin_time = data.pageFlips[i].time;
-				var pageBeginTime = visualToAudio(data, begin_time);
+        
+        
+            for(var i in data.pageFlips) { //iveel
+                var chapterThumb = $('<div class="chapters_item" id="chapter_'+i+'"><button class=expand id="expand_'+i+'">expand</button><button class="collapse">Collapse</button></div>');
+                
+                var begin_time = data.pageFlips[i].time;
+                var pageBeginTime = visualToAudio(data, begin_time);
 
-				var end_time = data.durationInSeconds;
-				var pageEndTime = visualToAudio(data, end_time);
+                var end_time = data.durationInSeconds;
+                var pageEndTime = visualToAudio(data, end_time);
 
-				if(i < data.pageFlips.length-1){
-					end_time = data.pageFlips[parseInt(i)+1].time;
-					pageEndTime = visualToAudio(data, end_time);
-				}
-				var dataURL = renderer.getThumbCanvas(192, 108, pageEndTime-GAP, pageBeginTime).toDataURL("image/png");
-				chapterThumb.append('<img id="img_'+i+'" src="'+dataURL+'">');
+                if(i < data.pageFlips.length-1){
+                    end_time = data.pageFlips[parseInt(i)+1].time;
+                    pageEndTime = visualToAudio(data, end_time);
+                }
+                var dataURL = renderer.getThumbCanvas(192, 108, pageEndTime-GAP, pageBeginTime).toDataURL("image/png");
+                chapterThumb.append('<img id="img_'+i+'" src="'+dataURL+'">');
 
-				var obj = {
-					parent: null, 
-					beginTime:begin_time,
-					endTime: end_time, 
-					img: dataURL,
-					page: i}
+                var obj = {
+                    parent: null, 
+                    beginTime:begin_time,
+                    endTime: end_time, 
+                    img: dataURL,
+                    page: i,
+                    order: i
+                }
 
-				chapterThumb.append('<span>'+data.pageFlips[i].page+'</span>');
-				$('.chapters_list').append(chapterThumb);
-				$('#extend_'+i).data("info", obj);
-			}
-		
-		function extendRoll(i){
-			var chap = $("#extend_"+i).data("info");
-			var duration = (chap.endTime - chap.beginTime)/numExt;
-			for(var n=0; n < numExt; n++) {
-				var parent = $("#extend_"+n).data("info");
-				var begin_time =  chap.beginTime+(n-1)*duration;
-				var end_time =  chap.beginTime+n*duration;
-				var urlBegin = visualToAudio(data, begin_time);
-				var urlEnd = visualToAudio(data, end_time);
-					
-				var dataURL = renderer.getThumbCanvas(192, 108, urlEnd-GAP, urlBegin).toDataURL("image/png");
-				 var obj = {
-					parent: parent, 
-					beginTime:begin_time,
-					endTime: end_time, 
-					img: dataURL,
-					page: n
-				 }
-				$("#extend_"+n).data("info", obj);
-				$("#img_"+n).attr("src",dataURL);
-			}	
-		}
+                chapterThumb.append('<span id="order_'+i+'">'+data.pageFlips[i].page+'</span>');
+                $('.chapters_list').append(chapterThumb);
+                $('#expand_'+i).data("info", obj);
+            }
+        
+        function expandRoll(i){
+            var slide = $("#expand_"+i).data("info");
+			var order = slide.order+".";
+            var duration = (slide.endTime - slide.beginTime)/numExpansion;
+            for(var n=0; n < numExpansion; n++) {
+                var parent = $("#expand_"+n).data("info");
+                var begin_time =  slide.beginTime+(n-1)*duration;
+                var end_time =  slide.beginTime+n*duration;
+                var urlBegin = visualToAudio(data, begin_time);
+                var urlEnd = visualToAudio(data, end_time);
+                    
+                var dataURL = renderer.getThumbCanvas(192, 108, urlEnd-GAP, urlBegin).toDataURL("image/png");
+                 var obj = {
+                    parent: parent, 
+                    beginTime:begin_time,
+                    endTime: end_time, 
+                    img: dataURL,
+                    page: n,
+					order: order+n
+                 }
+                $("#expand_"+n).data("info", obj);
+                $("#img_"+n).attr("src",dataURL);
+				$("#order_"+n).html(obj.order);
+            }   
+        }
 
-		function condenseRoll(){
-			if ($("#extend_0").data("info").parent != null){
-				for(var n=0; n < numExt; n++){
-					var parent = $("#extend_"+n).data("info").parent;
-					$("#extend_"+n).data("info",parent) ; 
-					$("#img_"+n).attr("src",parent.img);
-				}
-			}	
-		}
-		
-		$('#condense').on('click', function() {
-			condenseRoll();	
-		});
+        function collapseRoll(){
+            if ($("#expand_0").data("info").parent != null){
+                for(var n=0; n < numExpansion; n++){
+                    var preSlide = $("#expand_"+n).data("info").parent;
+                    $("#expand_"+n).data("info",preSlide) ; 
+                    $("#img_"+n).attr("src",preSlide.img);
+					$("#order_"+n).html(preSlide.order);
+                }
+            }   
+        }
+        
+        $('.collapse').on('click', function() {
+            collapseRoll(); 
+        });
 
 
         $('.chapters_item').on('click', function() {
             jumpToChapter(parseInt($(this).attr('id').split('_')[1]));
         });
-		
-		$('.extend').on('click', function() {  
-			var thPage = $(this).data("info").page;
-			extendRoll(thPage);
+        
+        $('.expand').on('click', function() {  
+            var thPage = $(this).data("info").page;
+            expandRoll(thPage);
 
-			
-		});
+            
+        });
         
         $('.right').on('click', function() {
             window.cancelAnimationFrame(chapterScrollID);
