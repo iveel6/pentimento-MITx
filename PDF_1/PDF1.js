@@ -82,7 +82,7 @@ var lecture = {
    {"tAudio": 1450.895752,  "tVisual": 1460.919189},
    {"tAudio": 1452.308960,  "tVisual": 1462.332886}],
 "audios":  [{
-"type" : "flac",
+"type" : "mp3",
 "offset": 240,
 "doesItGetDeleted" : false,
 "tDeletion":0,
@@ -144,10 +144,10 @@ var lecture = {
 "starttime":180,
 "tEndEdit":1000,
 "doesItGetDeleted" : true,
-"loop": false,
+"loop": true,
 "tDeletion":600,
 "hyperlink": "",
-"audioEnabled": false,
+"audioEnabled": true,
 "transforms" : [
     {
       "time" : 15.0,

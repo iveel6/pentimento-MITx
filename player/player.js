@@ -638,7 +638,7 @@ var PentimentoPlayer = function(data) {
             }else{
                 thumb_distX = thumb_posX-thumbnail_width/2+"px";
             } 
-			thumbnail_renderer.renderFrame(thumb_time);               
+			         thumbnail_renderer.renderFrame(thumb_time);               
             $("#thumbnail_container")
                 .show()
                 .css("margin-left", thumb_distX);
@@ -705,7 +705,7 @@ var PentimentoPlayer = function(data) {
         root.find('.prevChapter').on('click', prevChapter);
         
         renderer = new PentimentoRenderer(canvas_container, data, resourcepath);
-		thumbnail_renderer = new PentimentoRenderer(thumbnail_container, data, resourcepath); 
+		      thumbnail_renderer = new PentimentoRenderer(thumbnail_container, data, resourcepath); 
         listener = new PentimentoListener(canvas_container, data, eventHandler);
         
         // BEGIN CHANGES

@@ -10,20 +10,20 @@ var Pentimento_iframe = function(visual){
   $('#main_canvas').css('pointer-events','none')
   this.drawSelf = function (time, context, xscale, yscale,greyout, transformMatrix) {
     //don't draw/adjust webpage on thumb canvas.
-    if(time > visual.tMin && context.canvas.id == 'main_canvas'){
-      var x = visual.x*xscale*transformMatrix.m11 + transformMatrix.tx;
-      var y = visual.y*yscale*transformMatrix.m22 + transformMatrix.ty;
-      var w = visual.w*xscale*transformMatrix.m11;
-      var h = visual.h*yscale*transformMatrix.m22;
-      $(iframe).css('left',x)
-      $(iframe).css('top',y)
-      iframe.width = w
-      iframe.height = h
-      $(iframe).css('display', '')
-    }else{
-      $iframe.css('display', 'none')
+    if(context.canvas.id == 'main_canvas'){
+      if(time > visual.tMin){
+        var x = visual.x*xscale*transformMatrix.m11 + transformMatrix.tx;
+        var y = visual.y*yscale*transformMatrix.m22 + transformMatrix.ty;
+        var w = visual.w*xscale*transformMatrix.m11;
+        var h = visual.h*yscale*transformMatrix.m22;
+        $(iframe).css('left',x)
+        $(iframe).css('top',y)
+        iframe.width = w
+        iframe.height = h
+        $(iframe).css('display', '')
+      }else{
+        $iframe.css('display', 'none')
+      }
     }
-    
-  
   }
 }
