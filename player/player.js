@@ -275,7 +275,7 @@ var PentimentoPlayer = function(data) {
     function toggleChaptersVisibility() {
     
         if(chaptersView.css('z-index') === '-2') {
-            chaptersView.css('z-index', 0);
+            chaptersView.css('z-index', 10);
             chaptersView.animate({opacity: 0.95},100);
         }
         else {
