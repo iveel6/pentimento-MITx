@@ -26,6 +26,8 @@ var Visual = function (visual) {
     function checkbounds(context, tM){
         return (tM.ty + visual.y * tM.m22)>0 && (tM.tx + visual.x * tM.m11)>0
     }
+  
+
     this.checkbounds = checkbounds;
     this.getType = getType;
     /**
@@ -46,7 +48,7 @@ var Visual = function (visual) {
      *      strokes should be grayed out.
      */
     function render(time, context, xscale, yscale, timeOfPreviousThumb, transformMatrix) {
-        if (time > visual.tMin && this.checkbounds(context, transformMatrix)) {
+        if (time > visual.tMin) {
             var transform = this.getTransform(time);
             context.save();
             context.transform(transform.m11, transform.m12,

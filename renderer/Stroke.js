@@ -29,7 +29,6 @@ var Stroke = function (visual) {
         maxX = Math.max(minX, vertices[i].x)
         maxY = Math.max(minY, vertices[i].y)
       }
-    console.log(minX,minY,maxX,maxY)
     
     function checkbounds(context, tM){
       return (tM.ty + minY * tM.m22)>0 && (tM.tx + minX * tM.m11)>0

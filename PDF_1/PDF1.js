@@ -127,8 +127,8 @@ var lecture = {
 "src": "https://rawgit.com/changt/Knapsnack/master/knapsnack.html",
 "tMin": 10.0,
 "tEndEdit":1000,
-"doesItGetDeleted" : false,
-"tDeletion":0,
+"doesItGetDeleted" : true,
+"tDeletion":150.0,
 "hyperlink": "",
 "transforms" : [
     {

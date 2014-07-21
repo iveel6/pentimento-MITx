@@ -5,6 +5,7 @@ var Pentimento_audio = function(info, resourcepath){
   var audioM = $('audio')[0]
   audioM.addEventListener('timeupdate', function(e){
     if (audioObj.paused && shouldPlay()){
+      setPlaytime();
       audioObj.play()
     }
   })
