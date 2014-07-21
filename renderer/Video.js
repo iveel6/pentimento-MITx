@@ -39,7 +39,7 @@ var Pentimento_video = function (visual, resourcepath) {
           syncing for playbackrate allows for smoother play when fast forwarding.
           desiredTime is also created to reduce this overhead.
           */
-          if(videoObj.duration & !audio.paused){
+          if(videoObj.duration){
               setVideoTime();
               var x = visual.x*xscale;
               var y = visual.y*yscale;
@@ -54,7 +54,7 @@ var Pentimento_video = function (visual, resourcepath) {
       }
   //the video should play if it's past the starttime, and before the endtime, if the video gets deleted.
   function shouldPlay(currentTime){
-    return (currentTime > visual.starttime) && ((currentTime < visual.tDeletion) || !visual.doesItGetDeleted)
+    return (currentTime > visual.starttime) && ((currentTime < visual.tDeletion) || !visual.doesItGetDeleted) 
   }
   //only set the video's currenttime when it is needed.
   function setVideoTime(){
@@ -67,8 +67,11 @@ var Pentimento_video = function (visual, resourcepath) {
         videoObj.play();
       }else{
         desiredTime = videoObj.duration;
-        videoObj.pause()
+        videoObj.pause();
       }
+    }
+    if(audio.paused){
+        videoObj.pause();
     }
     if(Math.abs(videoObj.currentTime - desiredTime) > 1){
       videoObj.currentTime = desiredTime 
