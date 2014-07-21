@@ -29,6 +29,8 @@ body{
 	font-size: 12px;
 	background-color: #ddd;
 }
+
+
 .canvas_container {
     overflow: hidden;
     position: relative;
@@ -52,18 +54,16 @@ body{
 }
 .chapters_item {
     float: left;
-    overflow: hidden;
     width: 192px;
     height: 108px;
     cursor: pointer;
 }
 .chapters_item span {
     position: relative;
-    top: -90%;
+  
     pointer-events: none;
-    text-shadow: 2px 2px 5px #000;
     color: #000;
-    font-size: 1.5em;
+    font-size: 1em;
 }
 .chapters_item img {
     width: 100%;
@@ -72,6 +72,14 @@ body{
 }
 .chapters_item img:hover {
     opacity: 0.9;
+}
+
+.hoverExpand{
+	opacity: 0.9 !important;
+}
+
+.leavingButton{
+	opacity: 0.9;
 }
 .chapter_nav {
     background-color: #ddd;
@@ -173,6 +181,36 @@ body{
     float:left;
     width:125px;
 }
+
+.expand{
+	background-image: url('../images/expand.png');
+	background-position: center;
+	background-repeat: no-repeat;
+	background-color: white;
+	background-size:contain;
+	width: 35px;
+	height: 20px;
+	border-radius: 5px;
+	border: 1px #444 solid;	
+	margin-right: 1px;
+	margin-left:-20px;
+	margin-bottom:-25px;
+
+}
+
+.collapse{
+	background-image: url('../images/back.png');
+	background-position: center;
+	background-repeat: no-repeat;
+	background-color: white;
+	background-size:contain;
+	width: 30px;
+	height: 20px;
+	border-radius: 5px;
+	border: 1px #444 solid;	
+	margin-right:5px;
+}
+
 
 input[type='button']{
     width:50px;

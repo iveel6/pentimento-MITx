@@ -1,6 +1,8 @@
 var PentimentoPlayer = function(data) {
     var GAP = 0.1;
-    var numExpansion = data.pageFlips.length; 
+    var numExpansion = 6; 
+	var numSlides = data.pageFlips.length;
+	var thumbnail_slideStorage = [];
 	var thumbnail_container = $("#thumbnail_container");
 	var thumbnail_width = thumbnail_container.width();
     var controls = $('.controls');
@@ -252,9 +254,9 @@ var PentimentoPlayer = function(data) {
     *   Chapter navigation
     *
     *************************/
-    function nextChapter() {
-        for(var i=0; i<numExpansion; i++) {
-            var time = $("#expand_"+i).data("info").endTime;
+	function nextChapter() {
+        for(var i=0; i<numSlides; i++) {
+            var time = $("#chapter_"+i).data("end_time");
             if(visualToAudio(data, time) > audio.currentTime+0.5) {
                 jumpToChapter(i);
                 break;
@@ -263,8 +265,8 @@ var PentimentoPlayer = function(data) {
     }
     
     function prevChapter() {
-        for(var i=0; i<numExpansion; i++) {
-            var time = $("#expand_"+i).data("info").endTime;
+        for(var i=0; i<numSlides; i++) {
+            var time = $("#chapter_"+i).data("end_time");
             if(visualToAudio(data, time) < audio.currentTime-2) {
                 jumpToChapter(i);
                 break;
@@ -273,7 +275,6 @@ var PentimentoPlayer = function(data) {
     }
     //CHANGES
     function toggleChaptersVisibility() {
-    
         if(chaptersView.css('z-index') === '-2') {
             chaptersView.css('z-index', 10);
             chaptersView.animate({opacity: 0.95},100);
@@ -285,7 +286,9 @@ var PentimentoPlayer = function(data) {
 
     
         function jumpToChapter(i) {
-            var time = $("#expand_"+i).data("info").endTime-GAP;
+			console.log("jump");
+            var time = $("#chapter_"+i).data("end_time")-GAP;
+			console.log("jumptto",time);
             var currentTime = visualToAudio(data, time);
             audio.currentTime = currentTime;
             changeSlider(currentTime);
@@ -740,10 +743,10 @@ var PentimentoPlayer = function(data) {
         });
 
         
-        
-            for(var i in data.pageFlips) { //iveel
-                var chapterThumb = $('<div class="chapters_item" id="chapter_'+i+'"><button class=expand id="expand_'+i+'">expand</button><button class="collapse">Collapse</button></div>');
-                
+        function initiateSlides() {
+			$('.chapters_list').empty();
+			numSlides = data.pageFlips.length;
+            for(var i in data.pageFlips) { 
                 var begin_time = data.pageFlips[i].time;
                 var pageBeginTime = visualToAudio(data, begin_time);
 
@@ -754,76 +757,116 @@ var PentimentoPlayer = function(data) {
                     end_time = data.pageFlips[parseInt(i)+1].time;
                     pageEndTime = visualToAudio(data, end_time);
                 }
-                var dataURL = renderer.getThumbCanvas(192, 108, pageEndTime-GAP, pageBeginTime).toDataURL("image/png");
+	
+                var dataURL = renderer.getThumbCanvas(192, 108, pageEndTime-GAP).toDataURL("image/png");
+		
+				var chapterThumb = $('<div class="chapters_item" id="chapter_'+i+'" data-begin_time="'+begin_time+'" data-end_time="'+end_time+'"></div>');
+				
+				if( i != 0){
+					chapterThumb.append('<button class=expand id="expand_'+i+'" data-page="'+i+'"></button>');
+				}
+				
+				
+				chapterThumb.append('<span  id="slide_'+i+'">'+"slide:"+data.pageFlips[i].page+'</span>');
                 chapterThumb.append('<img id="img_'+i+'" src="'+dataURL+'">');
-
-                var obj = {
-                    parent: null, 
-                    beginTime:begin_time,
-                    endTime: end_time, 
-                    img: dataURL,
-                    page: i,
-                    order: i
-                }
-
-                chapterThumb.append('<span id="order_'+i+'">'+data.pageFlips[i].page+'</span>');
                 $('.chapters_list').append(chapterThumb);
-                $('#expand_'+i).data("info", obj);
-            }
-        
+   
+			}
+			thumbnail_slideStorage.push($('.chapters_list').clone());
+			slideHandlers();
+			$('.chapters_list').css('width', Math.max((192*$('.chapters_item').length),canvas.width)+'px');
+			
+		}
+		
+		initiateSlides();
+
         function expandRoll(i){
-            var slide = $("#expand_"+i).data("info");
-			var order = slide.order+".";
-            var duration = (slide.endTime - slide.beginTime)/numExpansion;
-            for(var n=0; n < numExpansion; n++) {
-                var parent = $("#expand_"+n).data("info");
-                var begin_time =  slide.beginTime+(n-1)*duration;
-                var end_time =  slide.beginTime+n*duration;
+			numSlides = numExpansion;
+            var slideBegin = $("#chapter_"+i).data("end_time");
+			var slideEnd =  $("#chapter_"+i).data("begin_time") 
+            var duration = (slideBegin-slideEnd)/numExpansion;
+			//console.log(duration);
+			$(".chapters_list").empty();
+			for(var n=0; n < numExpansion ; n++) {
+				//console.log("pre", $("#chapters_item"));
+				var begin_time =  slideBegin+(n-1)*duration;
+                var end_time =  slideBegin+n*duration;
                 var urlBegin = visualToAudio(data, begin_time);
                 var urlEnd = visualToAudio(data, end_time);
-                    
-                var dataURL = renderer.getThumbCanvas(192, 108, urlEnd-GAP, urlBegin).toDataURL("image/png");
-                 var obj = {
-                    parent: parent, 
-                    beginTime:begin_time,
-                    endTime: end_time, 
-                    img: dataURL,
-                    page: n,
-					order: order+n
-                 }
-                $("#expand_"+n).data("info", obj);
-                $("#img_"+n).attr("src",dataURL);
-				$("#order_"+n).html(obj.order);
-            }   
-        }
+				var dataURL = renderer.getThumbCanvas(192, 108, urlEnd-GAP).toDataURL("image/png");
+				
+				var chapterThumb = $('<div class="chapters_item" id="chapter_'+n+'" data-begin_time="'+begin_time+'" data-end_time="'+end_time+'"></div>');
+				
+				if( n != 0){
+					chapterThumb.append('<button class=expand id="expand_'+n+'" data-page="'+i+'"></button>');
+				}
+				
+				if (duration>=1){
+					chapterThumb.append('<button class="collapse id="collapse_'+n+'"></button>');
+				}
+				
+				chapterThumb.append('<span>'+"time: "+ secondsToTimestamp(end_time)+'</span>')
+				.append('<img id="img_'+n+'" src="'+dataURL+'">');
+				
+				
+				$('.chapters_list').append(chapterThumb);
+				
+			}
+			thumbnail_slideStorage.push($('.chapters_list').clone());
+			slideHandlers();
+			$('.chapters_list').css('width', Math.max((192*$('.chapters_item').length),canvas.width)+'px');
+		}
+				
+
 
         function collapseRoll(){
-            if ($("#expand_0").data("info").parent != null){
-                for(var n=0; n < numExpansion; n++){
-                    var preSlide = $("#expand_"+n).data("info").parent;
-                    $("#expand_"+n).data("info",preSlide) ; 
-                    $("#img_"+n).attr("src",preSlide.img);
-					$("#order_"+n).html(preSlide.order);
-                }
-            }   
+			console.log("len",thumbnail_slideStorage.length);
+			thumbnail_slideStorage.pop();
+			if (thumbnail_slideStorage.length == 1){
+				initiateSlides();
+				$('.chapters_list').css('width', Math.max((192*$('.chapters_item').length),canvas.width)+'px');
+			}else{
+				var preSlides = thumbnail_slideStorage[thumbnail_slideStorage.length-1];
+				$('.chapters_list').empty();
+				$('.chapters_list').append( preSlides);
+			}
+			
+			slideHandlers();
         }
         
+		
+		function slideHandlers() {
         $('.collapse').on('click', function() {
             collapseRoll(); 
         });
 
-
         $('.chapters_item').on('click', function() {
             jumpToChapter(parseInt($(this).attr('id').split('_')[1]));
         });
-        
-        $('.expand').on('click', function() {  
-            var thPage = $(this).data("info").page;
-            expandRoll(thPage);
-
-            
+        $('.expand').on('click', function() {
+            var thPage = $(this).attr("id").split("_")[1];
+            expandRoll(thPage); 
         });
-        
+		
+	
+			$('.expand').hover(
+				function(){
+					var num = $(this).attr("id").split("_")[1]
+					console.log("ok");
+					console.log($('#chapter_'+num+' img'));
+					$('#chapter_'+(num-1)+' img').addClass('hoverExpand')
+					$('#chapter_'+num+' img').addClass('hoverExpand');
+				},
+				function(){
+					var num = $(this).attr("id").split("_")[1]
+					console.log("ok");
+					console.log($('#chapter_'+num+' img'));
+					$('#chapter_'+(num-1)+' img').removeClass('hoverExpand')
+					$('#chapter_'+num+' img').removeClass('hoverExpand');
+					
+				}
+			);
+		}
         $('.right').on('click', function() {
             window.cancelAnimationFrame(chapterScrollID);
             animateChapterScroll(Date.now(), 500, 1);
@@ -832,6 +875,7 @@ var PentimentoPlayer = function(data) {
             window.cancelAnimationFrame(chapterScrollID);
             animateChapterScroll(Date.now(), 500, -1);
         });
+			
         //END CHANGES
         
         resizeVisuals();
