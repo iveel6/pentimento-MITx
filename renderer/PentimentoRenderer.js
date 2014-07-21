@@ -10,6 +10,8 @@ var PentimentoRenderer = function(canvas_container, data, resourcepath) {
     var main_context = main_canvas.getContext('2d');
     var background_canvas = $('#background_canvas')[0];
     var background_context = background_canvas.getContext('2d');
+    var overlay_canvas = $('#overlay_canvas')[0];
+    var overlay_context = overlay_canvas.getContext('2d');  //this is for the scroll bars and possibly strokes in the future.
     var freePosition = false;
     var transformMatrix = {
         m11: 1, m12: 0, m21: 0, m22: 1,
@@ -41,6 +43,8 @@ var PentimentoRenderer = function(canvas_container, data, resourcepath) {
             data.visuals[i] = new Pentimento_video(data.visuals[i], resourcepath);
         else if(data.visuals[i].type === 'iframe')
             data.visuals[i] = new Pentimento_iframe(data.visuals[i])
+        else if(data.visuals[i].type === 'quiz')
+            data.visuals[i] = new Pentimento_quiz(data.visuals[i])
         else
             console.log('Unknown type: '+data.visuals[i].type);
     }
@@ -164,15 +168,18 @@ var PentimentoRenderer = function(canvas_container, data, resourcepath) {
         }
       }
     }
-    /*
+    /*    
      *renders all the visuals.
-     *called after transformation matrix changes, or once in every QUALITY_INDEX frames
-     *takes 15-30ms (10 fold slower)
-     */ 
+     *called after transformation matrix changes, or once in every (QUALITY_INDEX+1) frames
+     *now optimized to check if the visual obj is within view
+     *takes up to 30ms (10 fold slower)
+     */
     
     function fullRender(time, context, xscale, yscale, timeOfPreviousThumb){
       for(var i=0; i<data.visuals.length; i++){
-        data.visuals[i].render(time, context, xscale, yscale, timeOfPreviousThumb, transformMatrix);
+        if (data.visuals[i].checkbounds(context, transformMatrix)){
+          data.visuals[i].render(time, context, xscale, yscale, timeOfPreviousThumb, transformMatrix);
+        }
       }
     }
     /**
@@ -208,6 +215,8 @@ var PentimentoRenderer = function(canvas_container, data, resourcepath) {
       if (background_canvas.width != main_canvas.width && background_canvas.height != main_canvas.height){
         background_canvas.width = main_canvas.width
         background_canvas.height = main_canvas.height
+        overlay_canvas.width = main_canvas.width
+        overlay_canvas.height = main_canvas.height
         background_context.fillStyle = 'rgb('+Math.round(data.backgroundColor.red*255)+','+
           Math.round(data.backgroundColor.green*255)+','+Math.round(data.backgroundColor.blue*255)+')';
         background_context.fillRect(0, 0, background_canvas.width, background_canvas.height);
@@ -236,7 +245,7 @@ var PentimentoRenderer = function(canvas_container, data, resourcepath) {
                                           -data.boundingRect.ymin*yscale*transformMatrix.m22);
             
             // draw fake scrollbars
-            drawScrollBars(canvas, context);
+            drawScrollBars(overlay_canvas, overlay_context);
         }
         
         context.setTransform(transformMatrix.m11, transformMatrix.m12,
@@ -281,6 +290,7 @@ var PentimentoRenderer = function(canvas_container, data, resourcepath) {
      * Draws fake scrollbars on the canvas
      */
     function drawScrollBars(canvas, context) {
+        context.clearRect(0,0,canvas.width,canvas.height)
         var xscale = canvas.width/data.width;
         var yscale = canvas.height/data.height;
         var tx = transformMatrix.tx;

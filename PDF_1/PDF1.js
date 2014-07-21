@@ -82,11 +82,11 @@ var lecture = {
    {"tAudio": 1450.895752,  "tVisual": 1460.919189},
    {"tAudio": 1452.308960,  "tVisual": 1462.332886}],
 "audios":  [{
-"type" : "mp3",
+"type" : "m4a",
 "offset": 240,
 "doesItGetDeleted" : false,
 "tDeletion":0,
-"fileName" : "sample_audio2.mp3" }],
+"fileName" : "sample_audio3.m4a" }],
 "visuals": [
 { 
 "type" : "pdf",
@@ -127,8 +127,8 @@ var lecture = {
 "src": "https://rawgit.com/changt/Knapsnack/master/knapsnack.html",
 "tMin": 10.0,
 "tEndEdit":1000,
-"doesItGetDeleted" : false,
-"tDeletion":0,
+"doesItGetDeleted" : true,
+"tDeletion":150.0,
 "hyperlink": "",
 "transforms" : [
     {
@@ -138,6 +138,21 @@ var lecture = {
     } ],
   "x" :300,   "y" : 600,
   "w" : 1200,   "h" : 1200},
+{
+"type" : "quiz",
+"tMin" : 100.0,
+"tMax" : 200.0,
+"question" : "SAMPLE_QUESTION",
+"question_type" : "multiple_choice",
+"choices": ["SAMPLE ANSWER 1", "SAMPLE ANSWER 2"],
+"answer": "SAMPLE ANSWER 1",
+"transforms" : [
+    {
+      "time" : 0.0,
+      "m11" : 1.000000, "m12" : 0.000000, "m21" : 0.000000, "m22" : 1.000000, 
+      "tx" : 0.000000, "ty" : 0.000000
+    } ],
+},
 {
 "type" : "video",
 "tMin": 0,
