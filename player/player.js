@@ -18,7 +18,7 @@ var PentimentoPlayer = function(data) {
     var resourcepath = root.attr('data-name')+'-resources/';
     //CHANGES
     var chaptersView = $('.chapters_view');
-    
+    console.log("path", resourcepath );
     var renderer;
     function eventHandler(info) {
         if(info.event === 'select') {
@@ -275,7 +275,7 @@ var PentimentoPlayer = function(data) {
     function toggleChaptersVisibility() {
     
         if(chaptersView.css('z-index') === '-2') {
-            chaptersView.css('z-index', 0);
+            chaptersView.css('z-index', 10);
             chaptersView.animate({opacity: 0.95},100);
         }
         else {
@@ -638,7 +638,10 @@ var PentimentoPlayer = function(data) {
             }else{
                 thumb_distX = thumb_posX-thumbnail_width/2+"px";
             } 
-			thumbnail_renderer.renderFrame(thumb_time);               
+			thumbnail_renderer.renderFrame(thumb_time,thumb_time-100 );  
+			//console.log(thumbnail_renderer.getThumbCanvas(198, 108, thumb_time).toDataURL("image/png"));
+			console.log(canvas);
+			
             $("#thumbnail_container")
                 .show()
                 .css("margin-left", thumb_distX);

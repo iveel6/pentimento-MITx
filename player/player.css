@@ -19,6 +19,7 @@ body{
     height: 108px;
 	width: 195px;
 	top:-120px;
+	z-index: 4;
 }
 
 #thumbnail_time{
@@ -35,7 +36,7 @@ body{
 }
 .chapters_view {
     position: relative;
-    top: -108px;
+    bottom: -200px;
     height: 108px;
     overflow: hidden;
     opacity: 0;
