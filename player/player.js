@@ -638,10 +638,14 @@ var PentimentoPlayer = function(data) {
             }else{
                 thumb_distX = thumb_posX-thumbnail_width/2+"px";
             } 
+<<<<<<< HEAD
 			thumbnail_renderer.renderFrame(thumb_time,thumb_time-100 );  
 			//console.log(thumbnail_renderer.getThumbCanvas(198, 108, thumb_time).toDataURL("image/png"));
 			console.log(canvas);
 			
+=======
+			         thumbnail_renderer.renderFrame(thumb_time);               
+>>>>>>> 46e219fdad749f7f2f4e26aa360808e0d8b127ce
             $("#thumbnail_container")
                 .show()
                 .css("margin-left", thumb_distX);
@@ -708,7 +712,7 @@ var PentimentoPlayer = function(data) {
         root.find('.prevChapter').on('click', prevChapter);
         
         renderer = new PentimentoRenderer(canvas_container, data, resourcepath);
-		thumbnail_renderer = new PentimentoRenderer(thumbnail_container, data, resourcepath); 
+		      thumbnail_renderer = new PentimentoRenderer(thumbnail_container, data, resourcepath); 
         listener = new PentimentoListener(canvas_container, data, eventHandler);
         
         // BEGIN CHANGES

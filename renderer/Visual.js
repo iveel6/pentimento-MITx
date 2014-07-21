@@ -22,6 +22,13 @@ var Visual = function (visual) {
     function getType(){
         return visual.type
     }
+  
+    function checkbounds(context, tM){
+        return (tM.ty + visual.y * tM.m22)>0 && (tM.tx + visual.x * tM.m11)>0
+    }
+  
+
+    this.checkbounds = checkbounds;
     this.getType = getType;
     /**
      * Get the current transform of the visual

@@ -60,6 +60,11 @@ var Pdf_Wrapper = function(visual, resourcepath){
           recache();});
       }
     }
+  
+    function checkbounds(a,b){
+      return true
+    }
+    this.checkbounds = checkbounds;
     //not used.
     function rendertext(viewport){
         var textLayer = new TextLayerBuilder({

@@ -19,7 +19,11 @@ body{
     height: 108px;
 	width: 195px;
 	top:-120px;
+<<<<<<< HEAD
 	z-index: 4;
+=======
+	z-index: 6;
+>>>>>>> 46e219fdad749f7f2f4e26aa360808e0d8b127ce
 }
 
 #thumbnail_time{
@@ -36,7 +40,10 @@ body{
 }
 .chapters_view {
     position: relative;
+<<<<<<< HEAD
     bottom: -200px;
+=======
+>>>>>>> 46e219fdad749f7f2f4e26aa360808e0d8b127ce
     height: 108px;
     overflow: hidden;
     opacity: 0;

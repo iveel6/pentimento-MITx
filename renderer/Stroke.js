@@ -17,6 +17,25 @@ var Stroke = function (visual) {
       var lasttime = visual.vertices[visual.vertices.length - 1].t
       return !(time1 > lasttime || time2<firsttime)
     }
+    
+    var minX = vertices[0].x,
+        minY = vertices[0].y,
+        maxX = 0,
+        maxY = 0;
+  
+    for(i=0; i < vertices.length; i++){
+        minX = Math.min(minX, vertices[i].x)
+        minY = Math.min(minY, vertices[i].y)
+        maxX = Math.max(minX, vertices[i].x)
+        maxY = Math.max(minY, vertices[i].y)
+      }
+    
+    function checkbounds(context, tM){
+      return (tM.ty + minY * tM.m22)>0 && (tM.tx + minX * tM.m11)>0
+    }
+  
+    this.checkbounds = checkbounds;
+  
     function drawSelf(time, context, xscale, yscale, grayout) {
         
         var deleted = false;
