@@ -327,7 +327,7 @@ input[type='button']:focus{
 }
 
 .nextChapter{
-    background-image: url('../images/nexturl.png');
+    background-image: url('../images/next.png');
     width:25px;
     margin:1px;
 }
