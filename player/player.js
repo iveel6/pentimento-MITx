@@ -286,9 +286,7 @@ var PentimentoPlayer = function(data) {
 
     
         function jumpToChapter(i) {
-			console.log("jump");
             var time = $("#chapter_"+i).data("end_time")-GAP;
-			console.log("jumptto",time);
             var currentTime = visualToAudio(data, time);
             audio.currentTime = currentTime;
             changeSlider(currentTime);
@@ -742,10 +740,20 @@ var PentimentoPlayer = function(data) {
             e.stopPropagation();
         });
 
-        
+        $('#controlChapters').append('<button id="toChapters">Chapters</button>')
+		.append('<button id="collapse"></button>')
+		.append('<span id="timeInterval"></span>') ;
+		
+		function setSlideInterval( begin, end){
+			$("#timeInterval").html('Time intreval: '+ secondsToTimestamp(begin) + ' - ' + secondsToTimestamp(end))
+		}
+		
+	
         function initiateSlides() {
 			$('.chapters_list').empty();
+			$("#collapse").hide()
 			numSlides = data.pageFlips.length;
+			setSlideInterval( 0, endTime);
             for(var i in data.pageFlips) { 
                 var begin_time = data.pageFlips[i].time;
                 var pageBeginTime = visualToAudio(data, begin_time);
@@ -772,23 +780,25 @@ var PentimentoPlayer = function(data) {
                 $('.chapters_list').append(chapterThumb);
    
 			}
-			thumbnail_slideStorage.push($('.chapters_list').clone());
+			thumbnail_slideStorage.push([$('.chapters_list').clone(), $('#timeInterval').clone()]);
 			slideHandlers();
 			$('.chapters_list').css('width', Math.max((192*$('.chapters_item').length),canvas.width)+'px');
 			
 		}
 		
+		
 		initiateSlides();
+	
 
         function expandRoll(i){
 			numSlides = numExpansion;
-            var slideBegin = $("#chapter_"+i).data("end_time");
-			var slideEnd =  $("#chapter_"+i).data("begin_time") 
-            var duration = (slideBegin-slideEnd)/numExpansion;
-			//console.log(duration);
+            var slideBegin = $("#chapter_"+i).data("begin_time");
+			var slideEnd =  $("#chapter_"+i).data("end_time");
+			setSlideInterval(slideBegin, slideEnd);
+            var duration = (slideEnd-slideBegin)/(numExpansion-1);
 			$(".chapters_list").empty();
-			for(var n=0; n < numExpansion ; n++) {
-				//console.log("pre", $("#chapters_item"));
+			$("#collapse").show();
+			for(var n=0; n <numExpansion  ; n++) {
 				var begin_time =  slideBegin+(n-1)*duration;
                 var end_time =  slideBegin+n*duration;
                 var urlBegin = visualToAudio(data, begin_time);
@@ -796,13 +806,9 @@ var PentimentoPlayer = function(data) {
 				var dataURL = renderer.getThumbCanvas(192, 108, urlEnd-GAP).toDataURL("image/png");
 				
 				var chapterThumb = $('<div class="chapters_item" id="chapter_'+n+'" data-begin_time="'+begin_time+'" data-end_time="'+end_time+'"></div>');
-				
-				if( n != 0){
+
+				if( n != 0 && duration>=1){
 					chapterThumb.append('<button class=expand id="expand_'+n+'" data-page="'+i+'"></button>');
-				}
-				
-				if (duration>=1){
-					chapterThumb.append('<button class="collapse id="collapse_'+n+'"></button>');
 				}
 				
 				chapterThumb.append('<span>'+"time: "+ secondsToTimestamp(end_time)+'</span>')
@@ -812,7 +818,9 @@ var PentimentoPlayer = function(data) {
 				$('.chapters_list').append(chapterThumb);
 				
 			}
-			thumbnail_slideStorage.push($('.chapters_list').clone());
+			
+
+			thumbnail_slideStorage.push([$('.chapters_list').clone(), $('#timeInterval').clone()]);
 			slideHandlers();
 			$('.chapters_list').css('width', Math.max((192*$('.chapters_item').length),canvas.width)+'px');
 		}
@@ -820,15 +828,17 @@ var PentimentoPlayer = function(data) {
 
 
         function collapseRoll(){
-			console.log("len",thumbnail_slideStorage.length);
 			thumbnail_slideStorage.pop();
 			if (thumbnail_slideStorage.length == 1){
 				initiateSlides();
-				$('.chapters_list').css('width', Math.max((192*$('.chapters_item').length),canvas.width)+'px');
 			}else{
-				var preSlides = thumbnail_slideStorage[thumbnail_slideStorage.length-1];
+				var preSlides = thumbnail_slideStorage[thumbnail_slideStorage.length-1][0];
+				var timeInterval = thumbnail_slideStorage[thumbnail_slideStorage.length-1][1];
 				$('.chapters_list').empty();
 				$('.chapters_list').append( preSlides);
+				$('#timeInterval').empty();
+				$('#timeInterval').append(timeInterval);
+				
 			}
 			
 			slideHandlers();
@@ -836,7 +846,10 @@ var PentimentoPlayer = function(data) {
         
 		
 		function slideHandlers() {
-        $('.collapse').on('click', function() {
+		$('#toChapters').on('click', function() {
+            initiateSlides();
+        });
+        $('#collapse').on('click', function() {
             collapseRoll(); 
         });
 
@@ -851,16 +864,12 @@ var PentimentoPlayer = function(data) {
 	
 			$('.expand').hover(
 				function(){
-					var num = $(this).attr("id").split("_")[1]
-					console.log("ok");
-					console.log($('#chapter_'+num+' img'));
+					var num = $(this).attr("id").split("_")[1];
 					$('#chapter_'+(num-1)+' img').addClass('hoverExpand')
 					$('#chapter_'+num+' img').addClass('hoverExpand');
 				},
 				function(){
-					var num = $(this).attr("id").split("_")[1]
-					console.log("ok");
-					console.log($('#chapter_'+num+' img'));
+					var num = $(this).attr("id").split("_")[1];
 					$('#chapter_'+(num-1)+' img').removeClass('hoverExpand')
 					$('#chapter_'+num+' img').removeClass('hoverExpand');
 					

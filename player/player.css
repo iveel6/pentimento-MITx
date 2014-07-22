@@ -36,23 +36,26 @@ body{
     position: relative;
 	
 }
+#controlChapters{
+	height: 20px;
+}
+
 .chapters_view {
     position: relative;
-    height: 108px;
+    height: 128px;
     overflow: hidden;
     opacity: 0;
     background-color: #eee;
 }
 .chapters_container {
     width: 100%;
-    height: 138px;
+    height: 140px;
     overflow-x: auto;
     overflow-y: hidden;
 }
-.chapters_list {
-    height: 100%;
-}
+
 .chapters_item {
+	position: relative;
     float: left;
     width: 192px;
     height: 108px;
@@ -60,14 +63,18 @@ body{
 }
 .chapters_item span {
     position: relative;
-  
+	top:90px;
+	margin-left: 70px;
     pointer-events: none;
-    color: #000;
-    font-size: 1em;
+	font-size: 12px;
+	background-color: #ddd;
+	z-index: 10;
 }
 .chapters_item img {
-    width: 100%;
-    height: 100%;
+	position: absolute;
+	left:0px;
+	width: 100%;
+	height: 100%;
     opacity: 0.55;
 }
 .chapters_item img:hover {
@@ -90,6 +97,7 @@ body{
     float: left;
     top: -138px;
     cursor: pointer;
+	z-index: 12;
 }
 .chapter_nav:hover {
     opacity: 0.7;
@@ -187,29 +195,47 @@ body{
 	background-position: center;
 	background-repeat: no-repeat;
 	background-color: white;
-	background-size:contain;
-	width: 35px;
-	height: 20px;
+	background-size:cover;
+	width: 25px;
+	height: 50px;
 	border-radius: 5px;
 	border: 1px #444 solid;	
-	margin-right: 1px;
-	margin-left:-20px;
-	margin-bottom:-25px;
+	position:absolute;
+	margin-left:-12px;
+	top:35px;
+	z-index: 12;
 
 }
 
-.collapse{
+#collapse{
+	position: absolute;
 	background-image: url('../images/back.png');
 	background-position: center;
 	background-repeat: no-repeat;
 	background-color: white;
 	background-size:contain;
-	width: 30px;
-	height: 20px;
+	width: 50px;
+	height: 18px;
 	border-radius: 5px;
 	border: 1px #444 solid;	
-	margin-right:5px;
+	margin-left: 120px;
 }
+
+#toChapters{
+	position: absolute;
+	background-color: white;
+	height: 18px;
+	border-radius: 5px;
+	border: 1px #444 solid;	
+	margin-left: 50px;
+	
+}
+
+#timeInterval{
+	font-size: 14px;
+	margin-left: 200px;
+}
+
 
 
 input[type='button']{
@@ -301,7 +327,7 @@ input[type='button']:focus{
 }
 
 .nextChapter{
-    background-image: url('../images/next.png');
+    background-image: url('../images/nexturl.png');
     width:25px;
     margin:1px;
 }

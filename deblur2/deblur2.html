@@ -21,8 +21,10 @@
             <div class='lecture'>
                 <div class='canvas_container'>
                     <canvas class='video' id = 'main_canvas' style = 'position: absolute; z-index: 3;'></canvas>
+					<canvas id='overlay_canvas' style='position: absolute; z-index: 4; pointer-events: none'></canvas> 
                     <canvas id= 'background_canvas' style="position: absolute; z-index: 1;"></canvas>
                     <div class="chapters_view">
+						<div id="controlChapters"></div>
                         <div class="chapters_container">
                             <div class="chapters_list">
                             </div>
