@@ -32,4 +32,12 @@ var Pentimento_iframe = function(visual){
       }
     }
   }
+  
+  this.render = function(time, context, xscale, yscale, timeOfPreviousThumb, transformMatrix) {
+    if(time>visual.tMin){
+      this.drawSelf(time,context,xscale,yscale,null,transformMatrix)
+    }else{
+      $iframe.css('display','none')
+    }
+}
 }

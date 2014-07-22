@@ -131,6 +131,7 @@ body{
 }
 
 .speedDisplay{
+    z-index: 10;
     position:absolute;
     color: #fff;
     text-shadow:
@@ -382,3 +383,6 @@ input[type='button']:focus{
     position:relative;
     top:10px;
 }
+
+/* For Quizzes */
+.no-close .ui-dialog-titlebar-close {display: none }
