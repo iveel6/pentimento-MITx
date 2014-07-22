@@ -1,0 +1,115 @@
+<!doctype html>
+<html>
+    <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+        <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+        <link href='http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css' rel='stylesheet' type='text/css'> 
+        <script src="barcod.js"></script>
+        <script src="../renderer/generalfunctions.js"></script>
+        <script src="../renderer/listeners.js"></script>
+        <script src="../renderer/Visual.js"></script>
+        <script src="../renderer/Stroke.js"></script>
+        <script src="../renderer/Image.js"></script>
+        <script src="../renderer/PentimentoRenderer.js"></script>
+        <script src="../renderer/preprocessor.js"></script>
+        <script src="../player/player.js"></script>
+          <script src="../renderer/preprocessor.js"></script>
+        <script src="../pdf/build/pdf.js"></script>
+        <script>
+          // Specify the main script used to create a new PDF.JS web worker.
+          // In production, leave this undefined or change it to point to the
+          // combined `pdf.worker.js` file.
+          PDFJS.workerSrc = '../pdf/build/pdf.worker.js';
+        </script>
+        <script src="../renderer/Pdf_Wrapper.js"></script>
+        <link href="../player/player.css" type="text/css" rel="stylesheet">
+    </head>
+    <body>
+        <span id='fps'>0 FPS</span>
+        <div class='pentimento' data-name='barcod'>
+            <div class='lecture'>
+                <div class='canvas_container'>
+                    <canvas class='video' id = 'main_canvas' style = 'position: absolute; z-index: 3;'></canvas>
+					<canvas id='overlay_canvas' style='position: absolute; z-index: 4; pointer-events: none'></canvas> 
+                    <canvas id= 'background_canvas' style="position: absolute; z-index: 1;"></canvas>
+                    <div class="chapters_view">
+						                <div id="controlChapters"></div>
+                        <div class="chapters_container">
+                            <div class="chapters_list">
+                            </div>
+                        </div>
+                        <div class="chapter_nav left">
+                            <svg>
+                                <polygon points="0,0 0,100 50,50" style="fill:#333;" />
+                            </svg>
+                        </div>
+                        <div class="chapter_nav right">
+                            <svg>
+                                <polygon points="0,0 0,100 50,50" style="fill:#333;" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                <div class='onScreenStatus'>
+                    <img src='../images/pause.png' id='pauseIcon' width='0px' height='0px'> </div>
+                <br> <div class='captions'>test captions</div>
+                <div class='controls'>
+					<div id="thumbnail_container" hidden="false">
+						<canvas height="108" width="195"></canvas>
+						<span id="thumbnail_time"></span>
+					</div>
+                    <div id='slider'>
+                        <div class="tick ui-widget-content"></div>
+                    </div>
+                    <div class='buttons'>
+                        <input class='start'  title="Play/Pause" type='button'/>
+                        <button class="slowDown top" title="Slower"></button>
+                        <button class="speedUp top" title="Faster"></button>
+                        <button class="prevChapter bottom" title="Next Page"></button>
+                        <button class="nextChapter bottom" title="Previous Page"></button>
+                        <button class="help" title="About"></button>
+                        <button class="viewChapterNav" title="Chapters List"></button>
+                    </div>
+                    <div id='totalTime'></div>
+                    <button class='volume'></button>
+                    <div class='volumeSlider'></div>
+                    <audio class='audio' preload='auto'>
+                        <source id='lectureAudio' src='barcod-resources/audio.mp3' tyoe='audio/mpeg'>
+                    </audio>
+                    <div class="speedDisplay"></div>
+                </div>
+                <div class='zoomRect'></div>
+                <div id='description-dialog'>
+                    <h3><img src='../images/penti.png'> Pentimento Player</h3>
+                    <ul><li>Click on a stroke to go to that point in the video</li>
+                        <li>Drag, scroll, or use arrow keys to pan around</li>
+                        <li>Shift-Scroll to zoom</li>
+                        <li>Double-click to zoom</li>
+                        <li>Shift-Arrow Key to pan faster</li>
+                    </ul><button id='closeDialog'>OK</button>
+                </div>
+                <div class="sideButtons">
+                    <button class="transBtns" id="zoomIn" title="Zoom In (+)">
+                        <img src="../images/plus.png"></button>
+                    <button class="transBtns" id="revertPos" title="Refocus (Enter)">
+                        <img src="../images/target.png"></button>
+                    <button class="transBtns" id="seeAll" title="Big Board View (A)">
+                        <img src="../images/seeall.png"></button>
+                    <button class="transBtns" id="zoomOut" title="Zoom Out (-)">
+                        <img src="../images/minus.png"></button>
+                    <button class="transBtns" id="fullscreen" title="Fullscreen (F)">
+                        <img src="../images/fs.png"></button>
+                    <button class="transBtns" id="screenshotURL" title="Screenshot (S)">
+                        <img src="../images/camera.png"></button>
+                    <button class="transBtns" id="timeStampURL" title="Link and Code (L)">
+                        <img src="../images/link.png"></button>
+                    <div class='URLinfo'>
+                        <button id='linkbutton'>State-saved URL</button>
+                        <button id='embedbutton'>Embed</button><br/>
+                        <textarea class='URLs' readonly='readonly' rows='1' cols='35' wrap='off'></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
