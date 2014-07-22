@@ -155,6 +155,22 @@ var lecture = {
     } ],
 },
 {
+"type" : "quiz",
+"tMin" : 150.0,
+"tMax" : 250.0,
+"question" : "SAMPLE_QUESTION2",
+"question_type" : "multiple_choice",
+"choices": ["SAMPLE ANSWER 1", "SAMPLE ANSWER 2", "SAMPLE ANSWER 3", "SAMPLE ANSWER 4"],
+"answer": "SAMPLE ANSWER 2",
+"rewindtime": 90.0,
+"transforms" : [
+    {
+      "time" : 0.0,
+      "m11" : 1.000000, "m12" : 0.000000, "m21" : 0.000000, "m22" : 1.000000, 
+      "tx" : 0.000000, "ty" : 0.000000
+    } ],
+},
+{
 "type" : "video",
 "tMin": 0,
 "starttime":180,
