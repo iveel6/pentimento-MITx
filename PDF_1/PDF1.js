@@ -144,8 +144,9 @@ var lecture = {
 "tMax" : 200.0,
 "question" : "SAMPLE_QUESTION",
 "question_type" : "multiple_choice",
-"choices": ["SAMPLE ANSWER 1", "SAMPLE ANSWER 2"],
+"choices": ["SAMPLE ANSWER 1", "SAMPLE ANSWER 2", "SAMPLE ANSWER 3", "SAMPLE ANSWER 4"],
 "answer": "SAMPLE ANSWER 1",
+"rewindtime": 0.0,
 "transforms" : [
     {
       "time" : 0.0,
