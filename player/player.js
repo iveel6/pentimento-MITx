@@ -1,5 +1,5 @@
 var PentimentoPlayer = function(data) {
-    var GAP = 0.1;
+    var GAP = 0.005;
     var numExpansion = 6; 
 	var numSlides = data.pageFlips.length;
 	var thumbnail_slideStorage = [];
@@ -803,7 +803,7 @@ var PentimentoPlayer = function(data) {
                 var end_time =  slideBegin+n*duration;
                 var urlBegin = visualToAudio(data, begin_time);
                 var urlEnd = visualToAudio(data, end_time);
-				var dataURL = renderer.getThumbCanvas(192, 108, urlEnd-GAP).toDataURL("image/png");
+				var dataURL = renderer.getThumbCanvas(192, 108, urlEnd).toDataURL("image/png");
 				
 				var chapterThumb = $('<div class="chapters_item" id="chapter_'+n+'" data-begin_time="'+begin_time+'" data-end_time="'+end_time+'"></div>');
 
