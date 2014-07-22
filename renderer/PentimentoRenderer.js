@@ -4,7 +4,7 @@
  * - resourcepath: the path to resources (images, etc)
  */
 var PentimentoRenderer = function(canvas_container, data, resourcepath) {
-    
+    console.log(data.boundingRect)
     var jq_canvas = canvas_container.find("canvas");
     var main_canvas = jq_canvas[0];
     var main_context = main_canvas.getContext('2d');
@@ -47,6 +47,10 @@ var PentimentoRenderer = function(canvas_container, data, resourcepath) {
             data.visuals[i] = new Pentimento_quiz(data.visuals[i])
         else
             console.log('Unknown type: '+data.visuals[i].type);
+    }
+    if (data.hasSlides){
+      var slides = new Slide_Wrapper(data.height,data.width,resourcepath)
+      data.visuals.unshift(slides);
     }
     for (var i in data.audios){
             Pentimento_audio(data.audios[i], resourcepath)
@@ -171,13 +175,13 @@ var PentimentoRenderer = function(canvas_container, data, resourcepath) {
     /*    
      *renders all the visuals.
      *called after transformation matrix changes, or once in every (QUALITY_INDEX+1) frames
-     *now optimized to check if the visual obj is within view
+     *now optimized to check if the visual obj is within view <- causes bugs in fullscreen
      *takes up to 30ms (10 fold slower)
      */
     
     function fullRender(time, context, xscale, yscale, timeOfPreviousThumb){
       for(var i=0; i<data.visuals.length; i++){
-        if (data.visuals[i].checkbounds(context, transformMatrix)){
+        if (true){//(data.visuals[i].checkbounds(context, transformMatrix)){
           data.visuals[i].render(time, context, xscale, yscale, timeOfPreviousThumb, transformMatrix);
         }
       }
