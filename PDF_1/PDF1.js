@@ -140,8 +140,8 @@ var lecture = {
   "w" : 1200,   "h" : 1200},
 {
 "type" : "quiz",
-"tMin" : 100.0,
-"tMax" : 200.0,
+"tMin" : 20.0,
+"tMax" : 50.0,
 "question" : "SAMPLE_QUESTION",
 "question_type" : "multiple_choice",
 "choices": ["SAMPLE ANSWER 1", "SAMPLE ANSWER 2", "SAMPLE ANSWER 3", "SAMPLE ANSWER 4"],
@@ -156,12 +156,11 @@ var lecture = {
 },
 {
 "type" : "quiz",
-"tMin" : 150.0,
-"tMax" : 250.0,
-"question" : "SAMPLE_QUESTION2",
-"question_type" : "multiple_choice",
-"choices": ["SAMPLE ANSWER 1", "SAMPLE ANSWER 2", "SAMPLE ANSWER 3", "SAMPLE ANSWER 4"],
-"answer": "SAMPLE ANSWER 2",
+"tMin" : 300.0,
+"tMax" : 350.0,
+"question" : "sample free response question. answer is 5.",
+"question_type" : "free_response",
+"answer": "5",
 "rewindtime": 90.0,
 "transforms" : [
     {

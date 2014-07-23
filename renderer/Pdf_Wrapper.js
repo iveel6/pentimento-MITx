@@ -137,7 +137,6 @@ var Pdf_Wrapper = function(visual, resourcepath){
 }
 //this is a bit inefficient way to deal with slides. However, there aren't that many slides. 
 //and the inefficiency only applies at the beginning of initilization.
-//several problems that forced this approach: 
 var Slide_Wrapper = function (height, width, resourcepath){
   var tempvisual = { 
                     "type" : "none",
@@ -201,8 +200,6 @@ var Slide_Wrapper = function (height, width, resourcepath){
       slides.forEach(function(ele){
       ele.drawSelf(time,context,xscale,yscale,greyout,transformMatrix);
       })
-    }else if(loaded){
-
     }
   };
   

@@ -19,6 +19,9 @@ var Pentimento_quiz = function(visual){
       var choice = $('<input type="radio" name = "'+ visual.question +'" value="' + choice +'">' + choice + '<br>')
       $quiz_body.append(choice)
     })
+  }else if (visual.question_type == 'free_response'){
+    var input = $('<input type = "text" name "'+ visual.question + '"> <br>')
+    $quiz_body.append(input)
   }
   
   var $quiz_main = $('<div title = "Pop quiz!" >')
@@ -29,7 +32,10 @@ var Pentimento_quiz = function(visual){
     
     if (visual.question_type == 'multiple_choice'){
       var ans = $quiz_body.find('input:checked').val()
+    } else if(visual.question_type = 'free_response'){
+      var ans = $quiz_body.find('input').val()
     }
+    
     
     $submit_button.hide()
     $quiz_body.find('input').attr('disabled', 'true');
