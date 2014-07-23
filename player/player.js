@@ -266,7 +266,7 @@ var PentimentoPlayer = function(data) {
             }
         }
     }
-    
+
     function prevChapter() {
         for(var i=0; i<numSlides; i++) {
             var time = $("#chapter_"+i).data("end_time");
@@ -290,9 +290,10 @@ var PentimentoPlayer = function(data) {
     
         function jumpToChapter(i) {
             var time = $("#chapter_"+i).data("end_time");
-            audio.currentTime = time;
-            changeSlider(time);
-			renderer.renderFrame(time);
+			var currentTime = visualToAudio(data, time)-GAP;
+            audio.currentTime = currentTime;
+            changeSlider(currentTime);
+			renderer.renderFrame(currentTime);
     }
     
     
@@ -632,7 +633,6 @@ var PentimentoPlayer = function(data) {
         
         //show thumbnail over timeline
         $('#slider').on("mousemove", function(evt) {
-			//console.log(
             var thumb_posX = evt.clientX - $(this).offset().left;
             var sliderW = $(this).innerWidth();
             var thumb_time = thumb_posX/sliderW*endTime;
@@ -751,19 +751,20 @@ var PentimentoPlayer = function(data) {
 		.append('<button id="collapse"></button>')
 		.append('<span id="timeInterval"></span>') ;
 		
+		//change time interval of change slide roll 
 		function setSlideInterval( begin, end, slideNum){
 			$("#timeInterval").html('Current interval: '+ secondsToTimestamp(begin) + ' - ' + secondsToTimestamp(end))
-			console.log("Num", slideNum, slideNum != undefined);
 			if (slideNum != undefined){
 				$("#timeInterval").append('; slide#'+slideNum);
 			}		
 		}
 		
+		//find time for a slide
 		function slide_time( slide, time){
-			return 'slide: '+(parseInt(slide)+1)+'; time: '+secondsToTimestamp(time)
+			return 'slide: '+(parseInt(slide)+1)+'; time: '+secondsToTimestamp( time);
 		}
 		
-		// Draw initial slides on scroll bar
+		//Draw initial slides on scroll bar
 		function initiateSlides() {
 			$('.chapters_list').empty();
 			$("#collapse").hide();
@@ -771,23 +772,22 @@ var PentimentoPlayer = function(data) {
 			numSlides = data.pageFlips.length;
 			setSlideInterval( 0, endTime);
             for(var i in data.pageFlips) { 
-				console.log("ok");
-                var begin_time = data.pageFlips[i].time;
-                var end_time = data.durationInSeconds;
-
-                if(i < data.pageFlips.length-1){
-                    end_time = data.pageFlips[parseInt(i)+1].time;
-                }
-	
-                var dataURL = renderer.getThumbCanvas(192, 108, visualToAudio(data, end_time)-GAP).toDataURL("image/png");
-		
+				if ( i == 0){
+					var begin_time = 0
+				}else{
+					var begin_time = data.pageFlips[parseInt(i)-1].time;
+				}
+				
+				var end_time = data.pageFlips[parseInt(i)].time;
+				var urlShow = visualToAudio(data, end_time)-GAP;
+                var dataURL = thumbnail_renderer.getThumbCanvas(192, 108, urlShow).toDataURL("image/png");
 				var chapterThumb = $('<div class="chapters_item" id="chapter_'+i+'" data-begin_time="'+begin_time+'" data-end_time="'+end_time+'"></div>');
 				
 				if( i != 0){
 					chapterThumb.append('<button class=expand id="expand_'+i+'" data-page="'+i+'"></button>');
 				}
 				
-				chapterThumb.append('<span  id="slide_'+i+'">'+slide_time(i, end_time)+'</span>');
+				chapterThumb.append('<span  id="slide_'+i+'">'+slide_time(i, urlShow)+'</span>');
                 chapterThumb.append('<img id="img_'+i+'" src="'+dataURL+'">');
                 $('.chapters_list').append(chapterThumb);
    
@@ -799,6 +799,7 @@ var PentimentoPlayer = function(data) {
 	
 		initiateSlides();
 		
+		//show slides between chosen two slide's time interval
         function expandRoll(i){
 			numSlides = numExpansion;
             var slideBegin = $("#chapter_"+i).data("begin_time");
@@ -810,8 +811,8 @@ var PentimentoPlayer = function(data) {
 			for(var n=0; n <numExpansion  ; n++) {
 				var begin_time =  slideBegin+(n-1)*duration;
                 var end_time =  slideBegin+n*duration;
-                var urlEnd = visualToAudio(data, end_time);
-				var dataURL = renderer.getThumbCanvas(192, 108, urlEnd-GAP).toDataURL("image/png");
+                var urlShow = visualToAudio(data, end_time)-GAP;
+				var dataURL = thumbnail_renderer.getThumbCanvas(192, 108, urlShow).toDataURL("image/png");
 				
 				var chapterThumb = $('<div class="chapters_item" id="chapter_'+n+'" data-begin_time="'+begin_time+'" data-end_time="'+end_time+'"></div>');
 
@@ -819,7 +820,7 @@ var PentimentoPlayer = function(data) {
 					chapterThumb.append('<button class=expand id="expand_'+n+'" data-page="'+i+'"></button>');
 				}
 				
-				chapterThumb.append('<span>'+"time: "+ secondsToTimestamp(end_time-GAP)+'</span>')
+				chapterThumb.append('<span>'+"time: "+ secondsToTimestamp(urlShow)+'</span>')
 				.append('<img id="img_'+n+'" src="'+dataURL+'">');
 				$('.chapters_list').append(chapterThumb);
 			}
@@ -829,12 +830,13 @@ var PentimentoPlayer = function(data) {
 				var rootSlide = thumbnail_slideStorage[1].rootSlide;
 			}
 			
-			setSlideInterval(slideBegin, slideEnd, rootSlide);
+			setSlideInterval(visualToAudio(data, slideBegin), urlShow, rootSlide);
 	thumbnail_slideStorage.push({chapterList:$('.chapters_list').html(),timeInterval: $('#timeInterval').html(), rootSlide:rootSlide});
 			slideHandlers();
 			$('.chapters_list').css('width', Math.max((192*$('.chapters_item').length),canvas.width)+'px');
 		}
-				
+		
+		//one step back to the slides roll (before last expanding)
         function collapseRoll(){
 			thumbnail_slideStorage.pop();
 			if (thumbnail_slideStorage.length ==1){
@@ -851,22 +853,18 @@ var PentimentoPlayer = function(data) {
         }
         
 		$('#collapse').on('click', function() {
-			console.log("clickCollapse");
             collapseRoll(); 
         });
 		
 		$('#toSlides').on('click', function() {
-			console.log("clickChapters");
             initiateSlides();
         });
 		
 		function slideHandlers() {
 			$('.chapters_item').on('click', function() {
-				console.log("chap_itm", parseInt($(this).attr('id').split('_')[1]));
 				jumpToChapter(parseInt($(this).attr('id').split('_')[1]));
 			});
 			$('.expand').on('click', function() {
-				console.log("expand");
 				var thPage = $(this).attr("id").split("_")[1];
 				expandRoll(thPage); 
 			});
