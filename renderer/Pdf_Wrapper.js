@@ -194,6 +194,7 @@ var Slide_Wrapper = function (height, width, resourcepath){
     //I can't do slides[i] = new pdf_wrapper here. the code will NOT exececute, but instead fail silently.
     //So I have to do this thing to deal with the async problem.
     loaded = true;
+    InitializeSlides();
   });
   this.drawSelf = function(time, context, xscale, yscale,greyout, transformMatrix){
     if(ready){
@@ -201,13 +202,19 @@ var Slide_Wrapper = function (height, width, resourcepath){
       ele.drawSelf(time,context,xscale,yscale,greyout,transformMatrix);
       })
     }else if(loaded){
+
+    }
+  };
+  
+  function InitializeSlides(){
         for (var i=0; i<numPages; i++){
           //create the pdf_wrappers if we haven't done it and we can do it.
           slides[i] = new Pdf_Wrapper(slides[i],resourcepath)
         }
+        console.log('got here')
         ready = true;
-    }
-  };
+
+  }
   
 }
     
