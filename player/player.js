@@ -774,10 +774,13 @@ var PentimentoPlayer = function(data) {
 				if ( i == 0){
 					var begin_time = 0
 				}else{
-					var begin_time = data.pageFlips[parseInt(i)-1].time;
+					var begin_time = data.pageFlips[parseInt(i)].time;
 				}
-				
-				var end_time = data.pageFlips[parseInt(i)].time;
+				if (i == data.pageFlips.length -1){
+					var end_time = audioToVisual(data, endTime);
+				}else{
+					var end_time = data.pageFlips[parseInt(i)+1].time;
+				}
 				var urlShow = visualToAudio(data, end_time)-GAP;
                 var dataURL = thumbnail_renderer.getThumbCanvas(192, 108, urlShow).toDataURL("image/png");
 				var chapterThumb = $('<div class="chapters_item" id="chapter_'+i+'" data-begin_time="'+begin_time+'" data-end_time="'+end_time+'"></div>');
