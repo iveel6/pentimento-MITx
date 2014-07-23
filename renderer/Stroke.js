@@ -41,18 +41,22 @@ var Stroke = function (visual) {
         var deleted = false;
         var property = this.getProperty(time);
         var fadeIndex = 1;
-        
         // fetch display property
         if(property.type === "fadingProperty") {
-            var timeBeginFade = visual.tDeletion+property.timeBeginFade;
+            //It used to be this, but it caused bugs that strokes aren't disappearing.
+            //var timeBeginFade = visual.tDeletion+property.timeBeginFade; 
+            var timeBeginFade = visual.tDeletion;
             var fadeDuration = property.durationOfFade;
             fadeIndex -= (time-timeBeginFade)/fadeDuration;
-            if(fadeIndex < 0)
+            if(fadeIndex < 0){
                 deleted = true;
+
+            }
         }
         else if(property.type === "basicProperty") {
-            if(visual.tDeletion < time)
+            if(visual.tDeletion < time){
                 deleted = true;
+            }
         }
         
         // proceed to render if visible at 'time'

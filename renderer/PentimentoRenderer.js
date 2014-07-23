@@ -181,9 +181,7 @@ var PentimentoRenderer = function(canvas_container, data, resourcepath) {
     
     function fullRender(time, context, xscale, yscale, timeOfPreviousThumb){
       for(var i=0; i<data.visuals.length; i++){
-        if (true){//(data.visuals[i].checkbounds(context, transformMatrix)){
           data.visuals[i].render(time, context, xscale, yscale, timeOfPreviousThumb, transformMatrix);
-        }
       }
     }
     /**
