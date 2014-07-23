@@ -1,6 +1,7 @@
 var PentimentoPlayer = function(data) {
     var GAP = 0.005;
     var numExpansion = 6; 
+	var PDF_ready = false;
 	var numSlides = data.pageFlips.length;
 	var thumbnail_slideStorage = [];
 	var thumbnail_container = $("#thumbnail_container");
@@ -613,11 +614,7 @@ var PentimentoPlayer = function(data) {
 			value: 0,
 			hoverValue: 0,
             change: function(event,ui){
-				//console.log(event);
-				if (event == "mousemove"){
-					console.log("move");
-				}else if
-            (event.originalEvent) {
+				if (event.originalEvent) {
                     audio.currentTime = ui.value;
                     renderer.renderFrame(ui.value);
 //                    var next = getTransform(ui.value);
@@ -636,6 +633,8 @@ var PentimentoPlayer = function(data) {
             var thumb_posX = evt.clientX - $(this).offset().left;
             var sliderW = $(this).innerWidth();
             var thumb_time = thumb_posX/sliderW*endTime;
+			//thumb_time should be in range 0 - endTime
+			thumb_time = Math.min( Math.max(0, thumb_tim), endTime); 
             var thumb_distX;
             
 			//computing position of thumbnail box
@@ -797,7 +796,7 @@ var PentimentoPlayer = function(data) {
 			$('.chapters_list').css('width', Math.max((192*$('.chapters_item').length),canvas.width)+'px');
 		}
 	
-		initiateSlides();
+		
 		
 		//show slides between chosen two slide's time interval
         function expandRoll(i){
@@ -917,6 +916,10 @@ var PentimentoPlayer = function(data) {
             setFullscreenMode(false);
         });
         $('.viewChapterNav').on('click', function() {
+			if (!PDF_ready){
+				initiateSlides();
+				PDF_ready = true;
+			}
             toggleChaptersVisibility();
         });
         
