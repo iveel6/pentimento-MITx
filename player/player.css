@@ -438,7 +438,7 @@ input[type='button']:focus{
 /**ABOUT MODAL**/
 
 .ui-dialog{
-    z-index: 9000;
+    z-index: 10000000000;/*needs to be bigger than 2147483647 */
 }
 
 #description-dialog h3{
