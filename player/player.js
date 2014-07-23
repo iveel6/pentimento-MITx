@@ -634,7 +634,7 @@ var PentimentoPlayer = function(data) {
             var sliderW = $(this).innerWidth();
             var thumb_time = thumb_posX/sliderW*endTime;
 			//thumb_time should be in range 0 - endTime
-			thumb_time = Math.min( Math.max(0, thumb_tim), endTime); 
+			thumb_time = Math.min( Math.max(0, thumb_time), endTime); 
             var thumb_distX;
             
 			//computing position of thumbnail box
