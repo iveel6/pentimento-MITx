@@ -1,10 +1,32 @@
+//Pentimento implentation of a video object wrapped inside a visual.
+//Pentimento_video Object Syntax:
+//{
+//"type" : "video",
+//"tMin": 0,  //always 0
+//"starttime":int start_time, //audio timing
+//"tEndEdit":int, not supported,
+//"doesItGetDeleted" : boolean,
+//"loop": boolean,  //whether the video loops after it finishes. if false, video stays at the last frame.
+//"tDeletion":float tDeltion, //audio timing, instead of the usual video timing.
+//"hyperlink": not supported,
+//"audioEnabled": true, //whether the audio with the video should play.
+//"transforms" : [
+//    {
+//      "time" : 15.0,
+//      "m11" : 1.000000, "m12" : 0.000000, "m21" : 0.000000, "m22" : 1.000000, 
+//      "tx" : 0.000000, "ty" : 0.000000
+//    } ],
+//  "x" : int x-position,   "y" : int y-position,
+//  "w" : int width,   "h" : int height,
+//  "fileName" : "sample_2.m4v" }
+
 var Pentimento_video = function (visual, resourcepath) {
     $.extend(this, new Visual(visual));
     var videoObj = $('<video>')[0];
-    var audio = $('audio')[0] //this is the audio to sync up with.
+    var audio = $('audio')[0] //this is the main audio to sync up with.
     var desiredTime = 0;
     videoObj.src = resourcepath + visual.fileName;
-    //syncs the video with the audio as much as possible.
+    //these event listeners allow the video to sync up with the audio natively as much as possible.
     audio.addEventListener('pause',function(){
       videoObj.pause();})
     audio.addEventListener('play',function(){
@@ -17,7 +39,7 @@ var Pentimento_video = function (visual, resourcepath) {
 
     videoObj.muted = !visual.audioEnabled;
     //syncs video with muting and volume adjustment.
-    //let's only do it if audio is enabled, so that we get a little performance.
+    //let's only do it if audio is enabled, so that we get a little better performance.
     if(visual.audioEnabled){
         videoObj.muted = audio.muted
         audio.addEventListener('volumechange', function(e){
@@ -56,7 +78,8 @@ var Pentimento_video = function (visual, resourcepath) {
   function shouldPlay(currentTime){
     return (currentTime > visual.starttime) && ((currentTime < visual.tDeletion) || !visual.doesItGetDeleted) 
   }
-  //only set the video's currenttime when it is needed.
+  //only set the video's currenttime when the video time is very much off with the audio time.
+  //syncing too much causes the video to be slow.
   function setVideoTime(){
     desiredTime = audio.currentTime - visual.starttime
     if (visual.loop){

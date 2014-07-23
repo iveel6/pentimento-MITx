@@ -22,7 +22,7 @@ var PentimentoRenderer = function(canvas_container, data, resourcepath) {
     var fastRenderFrames = 0;
     var timeOfLastUpdate = 0;
     var framesInSeconds = 0;
-    var QUALITY_INDEX = 3; //make this higher for higher performance and lower quality
+    var QUALITY_INDEX = 20; //make this higher for higher performance and lower quality
                            //make this 0 for maximized quality and should be identical to the old rendering
                            //at the current iteration of 7/18/2014, also affects the FPS of embedded videos (Max_FPS = 60/(1+quality))
                            //setting this from 0 to 5 resulted on a 50% increase in performance.
@@ -175,15 +175,13 @@ var PentimentoRenderer = function(canvas_container, data, resourcepath) {
     /*    
      *renders all the visuals.
      *called after transformation matrix changes, or once in every (QUALITY_INDEX+1) frames
-     *now optimized to check if the visual obj is within view <- causes bugs in fullscreen
+     *now optimized to check if the visual obj is within view <- removed because it causes bugs in fullscreen
      *takes up to 30ms (10 fold slower)
      */
     
     function fullRender(time, context, xscale, yscale, timeOfPreviousThumb){
       for(var i=0; i<data.visuals.length; i++){
-        if (true){//(data.visuals[i].checkbounds(context, transformMatrix)){
           data.visuals[i].render(time, context, xscale, yscale, timeOfPreviousThumb, transformMatrix);
-        }
       }
     }
     /**
