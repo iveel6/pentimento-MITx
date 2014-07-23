@@ -111,7 +111,7 @@ var Pdf_Wrapper = function(visual, resourcepath){
         var y = visual.y*yscale;
         var w = visual.w*xscale;
         var h = visual.h*yscale;
-        if((!visual.doesItGetDeleted || time < visual.tDeletion) && context.canvas.id == 'main_canvas'){
+        if((!visual.doesItGetDeleted || time < visual.tDeletion)){
               context.drawImage(canvasC,x,y,w,h)
             //code for rerender every time the scale changes.
             //since scale changes with quintic easing, this has low performance.
