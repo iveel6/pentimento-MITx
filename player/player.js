@@ -778,7 +778,6 @@ var PentimentoPlayer = function(data) {
 				}
 				if (i == data.pageFlips.length -1){
 					var end_time = audioToVisual(data, endTime);
-					console.log( end_time, endTime);
 				}else{
 					var end_time = data.pageFlips[parseInt(i)+1].time;
 				}
