@@ -80,10 +80,10 @@ var Pentimento_quiz = function(visual){
     $Rewind_button.hide();
     $Retry_button.click();
     $quiz_main.dialog("close");
-    audioM.currentTime = visual.rewindtime;
+    audioM.currentTime = visualToAudio(lecture, visual.rewindtime);
     audioM.play();
     quiz_active = false;
-  })
+    })
   $quiz_body.append($submit_button)
   $quiz_main.append($quiz_question)
   $quiz_main.append($quiz_body)

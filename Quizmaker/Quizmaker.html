@@ -11,30 +11,32 @@
     <label for="Question Title"></label>
   </p>
   <p>Question Title: 
-    <input type="text" name="Question Title" id="Question Title">
+    <input type="text" name="Question Title" id="question_title">
   </p>
   <p>Question Type: 
-    <input type="radio" name= 'question' id="Q_MC" value="Question_Type_MC"> Multiple Choice (Single Answer)
-    <input type = 'radio' name = 'question' id = 'Q_MMC' value = 'Multiple_choice_2' > Multiple Choice (Multiple Answers)
-    <input type = 'radio' name = 'question' id = 'Q_FR' value = 'Free_response'> Free Response
-    <input type = 'radio' name  = 'question' id = 'Q_Ma' value = 'matching'> Matching
+    <input type="radio" name= 'question' id="Q_MC" data-type="multiple_choice"> Multiple Choice (Single Answer)
+    <input type = 'radio' name = 'question' id = 'Q_MMC' data-type = 'multiple_choice_2' > Multiple Choice (Multiple Answers)
+    <input type = 'radio' name = 'question' id = 'Q_FR' data-type = 'free_response'> Free Response
+    <input type = 'radio' name  = 'question' id = 'Q_Ma' data-type = 'matching'> Matching
   </p>
   <p>
     Question Starting Time: <input type = 'text' id = 'Starttime'> Ending Time: <input type = 'text' id = 'Endtime'> <br>
-    Rewide to Time: <input type = 'text' id = 'Rewindtime'>
+    Rewind to Time: <input type = 'text' id = 'Rewindtime'>
   </p>
   <div id = 'answers'>
     <div id = 'multiple_choice_answers' class = 'answer_specific_type'>
       <table id = 'choices_table'>
+        <tr><td>Correct Answer</td><td>Choices</td></tr>
       </table>
       <button id = 'MC_add'>Add another choice</button>
       <button id = 'MC_remove'>Remove choice</button>
     </div>
     <div id = 'multiple_choice_answers_2' class = 'answer_specific_type'>
       <table id = 'choices_table_2'>
+        <tr><td>Correct Answers</td><td>Choices</td></tr>
       </table>
-      <button id = 'MC_add'>Add another choice</button>
-      <button id = 'MC_remove'>Remove choice</button>
+      <button id = 'MMC_add'>Add another choice</button>
+      <button id = 'MMC_remove'>Remove choice</button>
     </div>
     <div id = 'free_response_answers' class = 'answer_specific_type'>
       Correct Answer: <input type = 'text' id = 'fr_correct_ans'>
@@ -48,8 +50,6 @@
       </table>
         <button id = 'Ma_add'>Add more matchings</button>
         <button id = 'Ma_remove'>Remove matching</button>
-    
-    </div>
   </div>
  
   <button id = 'generate'>Generate Quiz</button>
