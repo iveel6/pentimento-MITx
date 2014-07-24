@@ -122,6 +122,7 @@ var lecture = {
   "x" : 500,   "y" : 4000,
   "w" : 1230,   "h" : 1650,
   "fileName" : "sample_pdf.pdf" },
+{"question":"Quizmaker multiple answer test","type":"quiz","question_type":"multiple_choice","tMin":180,"tMax":220,"rewindtime":100,"transforms":[{"time":0,"m11":1,"m12":0,"m21":0,"m22":1,"tx":0,"ty":0}],"choices":["choice one (right)","choice two (right)","choice 3 (wrong)","choice 4 (right)"],"answer":["choice one (right)","choice two (right)","choice 4 (right)"]},
 { 
 "type" : "iframe",
 "src": "https://rawgit.com/changt/Knapsnack/master/knapsnack.html",
@@ -155,38 +156,7 @@ var lecture = {
       "tx" : 0.000000, "ty" : 0.000000
     } ],
 },
-{
-"type" : "quiz",
-"tMin" : 5.0,
-"tMax" : 50.0,
-"question" : "SAMPLE_QUESTION",
-"question_type" : "multiple_choice",
-"choices": ["SAMPLE ANSWER 1", "SAMPLE ANSWER 2", "SAMPLE ANSWER 3", "SAMPLE ANSWER 4"],
-"answer": ["SAMPLE ANSWER 1", "SAMPLE ANSWER 2"],
-"rewindtime": 0.0,
-"transforms" : [
-    {
-      "time" : 0.0,
-      "m11" : 1.000000, "m12" : 0.000000, "m21" : 0.000000, "m22" : 1.000000, 
-      "tx" : 0.000000, "ty" : 0.000000
-    } ],
-},
-{"question":"question quizmaker answer 6","type":"quiz","question_type":"multiple_choice","tMin":180,"tMax":220,"rewindtime":100,"transforms":[{"time":0,"m11":1,"m12":0,"m21":0,"m22":1,"tx":0,"ty":0}],"choices":["wrong answer","right answer","incorrect answer","false answer"],"answer":["right answer"]},
-{
-"type" : "quiz",
-"tMin" : 300.0,
-"tMax" : 350.0,
-"question" : "sample free response question. answer is 5.",
-"question_type" : "free_response",
-"answer": "5",
-"rewindtime": 90.0,
-"transforms" : [
-    {
-      "time" : 0.0,
-      "m11" : 1.000000, "m12" : 0.000000, "m21" : 0.000000, "m22" : 1.000000, 
-      "tx" : 0.000000, "ty" : 0.000000
-    } ],
-},
+{"question":"Quizmaker Matching test","type":"quiz","question_type":"matching","tMin":130,"tMax":220,"rewindtime":100,"transforms":[{"time":0,"m11":1,"m12":0,"m21":0,"m22":1,"tx":0,"ty":0}],"left_side":["a","b","c","d","e"],"right_side":["A","B","C","D","E"]},
 {
 "type" : "video",
 "tMin": 0,

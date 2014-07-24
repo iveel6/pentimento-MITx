@@ -4,7 +4,7 @@ $(function(){
   var MC_row_num = 0
   
   function Create_MC_row(){
-    var $MC_row = $('<tr><td><input type = radio name = "MC_Correct"></td><td><input type = text class = "MC_input"></td></tr>');
+    var $MC_row = $('<tr><td><input type = radio name = "MC_Correct"></td><td><input type = text placeholder="type choice here" class = "MC_input"></td></tr>');
     return $MC_row
   }
   
@@ -14,7 +14,7 @@ $(function(){
   }
   
   function Create_MMC_row(){
-    var $MMC_row = $('<tr><td><input type = checkbox name = "MMC_Correct"></td><td><input type = text class = "MMC_input"></td></tr>');
+    var $MMC_row = $('<tr><td><input type = checkbox name = "MMC_Correct"></td><td><input type = text placeholder="type choice here" class = "MMC_input"></td></tr>');
     return $MMC_row
   }
 
@@ -69,6 +69,10 @@ $(function(){
     var quiz = {}
     quiz.question = $('#question_title').val();
     var question_type = $('input[name=question]:checked').data('type')
+    if(!question_type){
+      alert('please choose a question type')
+      return false;
+    }
     quiz.type = 'quiz'
     quiz.question_type = question_type
     quiz.tMin = parseInt($('#Starttime').val()) || 0;

@@ -1,3 +1,83 @@
 .answer_specific_type {
   display:none;
 }
+
+body{
+  font-family: 'Helvetica';
+  background-color: rgba(255, 255, 175, 0.29);
+}
+
+.quizmaker_main{
+  margin-left: 10%;
+}
+#question_title{
+  margin-left: 15px;
+  resize:none;
+  width:300px;
+  height: 30px;
+  margin-bottom: 0px;
+}
+input.time{
+  width: 40px;
+  margin-right: 10px;
+  margin-left: 5px;
+}
+
+tr{
+  height: 35px;
+}
+
+td{
+  width: 140px;
+}
+
+td input[type=text]{
+  border-width: 1px;
+  width: 300px;
+  height: 25px;
+  font-size: 15px;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  padding-top:0px;
+  padding-bottom:0px;
+}
+
+input[type=radio]{
+  width: 1.7em;
+  height: 1.7em;
+  vertical-align:sub;
+  margin-left: 15px;
+}
+
+input[type=checkbox]{
+  width: 1.7em;
+  height: 1.7em;
+  vertical-align: sub;
+}
+table,tr,td{
+  text-align:center;
+  border-style:inset;
+  border-collapse: collapse;
+  border-color: #d8d8d8;
+}
+
+#fr_correct_ans{
+  width: 230px;
+  height: 20px;
+}
+
+button{
+  height: 2.4em;
+  font-size: 0.8em;
+  margin-top: 10px;
+  border-style: none;
+  border-radius: 10px;
+  background-color:#d5d5d5;
+}
+
+button:hover{
+  cursor:pointer;
+  background-color:#bbbbbb;
+}
+#generate{
+}
