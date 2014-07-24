@@ -1,42 +1,71 @@
 var Pentimento_quiz = function(visual){
-  $.extend(this, new Visual(visual));
-  var audioM = $('audio')[0];
-  var finished = false;
-  var onscreen = false;
-  
+	$.extend(this, new Visual(visual));
+	var audioM = $('audio')[0];
+	var finished = false;
+	var onscreen = false;
+	var NUMBERS = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26];
+	var LETTERS = ['a', 'b', 'c', 'd', 'e', 'f', 'g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
+ 
   function checkbounds(a,b){
     return !finished
   }
   this.checkbounds = checkbounds;
   
-  
   var $quiz_question = $('<div>')
   $quiz_question.text(visual.question)
   
   var $quiz_body = $('<div>')
+  
   if (visual.question_type == 'multiple_choice'){
-    $.each(visual.choices, function(index, choice){
-      var choice = $('<input type="radio" name = "'+ visual.question +'" value="' + choice +'">' + choice + '<br>')
-      $quiz_body.append(choice)
-    })
+	  //for single correct answer
+	  if (visual.answer.length == 1){
+		$.each(visual.choices, function(index, choice){
+			var choice = $('<input type="radio" name = "'+ visual.question +'" value="' + choice +'">' + choice + '<br>')
+			$quiz_body.append(choice)
+		})
+	  //for multiple correct answers
+	  }else{
+		  $.each(visual.choices, function( index, choice){
+			  var choice = $('<input type="Checkbox" name = "'+ visual.question +'" value="' + choice +'">' + choice + '<br>')
+			  $quiz_body.append(choice)
+		  })
+	  }
   }else if (visual.question_type == 'free_response'){
-    var input = $('<input type = "text" name "'+ visual.question + '"> <br>')
+    var input = $('<input type = "text" name ="'+ visual.question + '"> <br>')
     $quiz_body.append(input)
-  }
+  }else if (visual.question_type == 'matching'){
+	  var table = $('<table></table>');
+	  var shuffled_order = NUMBERS.slice(0, visual.right_side.length); 
+	  visual.answer = [];
+	  //shuffle matchings
+	  shuffled_order.sort(function() { return 0.5 - Math.random() }); 
+	  for (i in shuffled_order){
+		  var row = $('<tr><td><input type="text" style="width:20px"></td><td>'+NUMBERS[i]+'. '+ visual.left_side[i]+'</td><td>'+'&nbsp&nbsp&nbsp'+LETTERS[i]+'. '+visual.right_side[shuffled_order[i]-1]+'</td></tr>');
+		  table.append(row);
+		  visual.answer.push(LETTERS[shuffled_order[i]-1]);
+	  }
+	  
+	  $quiz_body.append(table);
+  }	  
+
   
   var $quiz_main = $('<div title = "Pop quiz!" >')
-  var $submit_button = $('<button>Answer</button>')
+  var $submit_button = $('<button>Submit</button>')
   var $result_div = $('<div class = "result"></div>')
   
   
   $submit_button.click(function(e){
     
-    if (visual.question_type == 'multiple_choice'){
-      var ans = $quiz_body.find('input:checked').val()
-    } else if(visual.question_type = 'free_response'){
-      var ans = $quiz_body.find('input').val()
-    }
-    
+	if (visual.question_type == 'multiple_choice'){
+	  var ans = $quiz_body.find('input:checked').map(function() {
+		  return $(this).val();}).toArray().join(',');
+	}else if(visual.question_type == 'free_response'){
+	  var ans = $quiz_body.find('input').val()
+	}else if(visual.question_type == 'matching'){
+		 var ans = $quiz_body.find('input').map(function() {
+		  return $(this).val().toLocaleLowerCase();}).toArray().join(',');
+
+	}
     
     $submit_button.hide()
     $quiz_body.find('input').attr('disabled', 'true');
@@ -102,8 +131,8 @@ var Pentimento_quiz = function(visual){
       if(!finished){
         $quiz_main.dialog({
           resizable: false,
-          height: 270,
-          width: 350,
+          height: 300,
+          width: 400,
           dialogClass: 'no-close'
         });
         audioM.pause();

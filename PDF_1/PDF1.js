@@ -138,14 +138,31 @@ var lecture = {
     } ],
   "x" :300,   "y" : 600,
   "w" : 1200,   "h" : 1200},
+	
 {
 "type" : "quiz",
-"tMin" : 20.0,
+"tMin" : 2.0,
+"tMax" : 50.0,
+"question" : "SAMPLE_QUESTION",
+"question_type" : "matching",
+"left_side": ["SAMPLE 1", "SAMPLE 2", "SAMPLE 3", "SAMPLE 4"],
+"right_side": ["TO SAMPLE 1", "TO SAMPLE 2", "TO SAMPLE 3", "TO SAMPLE 4"],
+"rewindtime": 0.0,
+"transforms" : [
+    {
+      "time" : 0.0,
+      "m11" : 1.000000, "m12" : 0.000000, "m21" : 0.000000, "m22" : 1.000000, 
+      "tx" : 0.000000, "ty" : 0.000000
+    } ],
+},
+{
+"type" : "quiz",
+"tMin" : 5.0,
 "tMax" : 50.0,
 "question" : "SAMPLE_QUESTION",
 "question_type" : "multiple_choice",
 "choices": ["SAMPLE ANSWER 1", "SAMPLE ANSWER 2", "SAMPLE ANSWER 3", "SAMPLE ANSWER 4"],
-"answer": "SAMPLE ANSWER 1",
+"answer": ["SAMPLE ANSWER 1", "SAMPLE ANSWER 2"],
 "rewindtime": 0.0,
 "transforms" : [
     {
