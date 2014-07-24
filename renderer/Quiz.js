@@ -39,11 +39,14 @@ var Pentimento_quiz = function(visual){
 	  visual.answer = [];
 	  //shuffle matchings
 	  shuffled_order.sort(function() { return 0.5 - Math.random() }); 
-	  for (i in shuffled_order){
+	  console.log(shuffled_order)
+	  for (var i=0;i<shuffled_order.length; i++){
 		  var row = $('<tr><td><input type="text" style="width:20px"></td><td>'+(NUMBERS[i]+1)+'. '+ visual.left_side[i]+'</td><td>'+'&nbsp&nbsp&nbsp'+LETTERS[i]+'. '+visual.right_side[shuffled_order[i]]+'</td></tr>');
 		  table.append(row);
 		  visual.answer.push(LETTERS[shuffled_order[i]]);
+		  
 	  }
+	  console.log(visual.answer)
 	  $quiz_body.append(table);
   }	  
 
