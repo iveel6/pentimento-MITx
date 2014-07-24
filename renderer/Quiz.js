@@ -43,10 +43,9 @@ var Pentimento_quiz = function(visual){
 	  for (var i=0;i<shuffled_order.length; i++){
 		  var row = $('<tr><td><input type="text" style="width:20px"></td><td>'+(NUMBERS[i]+1)+'. '+ visual.left_side[i]+'</td><td>'+'&nbsp&nbsp&nbsp'+LETTERS[i]+'. '+visual.right_side[shuffled_order[i]]+'</td></tr>');
 		  table.append(row);
-		  visual.answer.push(LETTERS[shuffled_order[i]]);
+		  visual.answer.push(LETTERS[shuffled_order.indexOf(NUMBERS[i])]);
 		  
 	  }
-	  console.log(visual.answer)
 	  $quiz_body.append(table);
   }	  
 
@@ -103,7 +102,14 @@ var Pentimento_quiz = function(visual){
   var $Reveal_button = $('<button>Reveal Answer</button>')
   $Reveal_button.click(function(e){
     $quiz_main.find('button').hide()
-    $result_div.html('the correct answer is '+ visual.answer)
+	$result_div.html('the correct answer is ')
+	if (visual.question_type == 'matching'){
+		for (var i=0; i < visual.answer.length; i++){
+			$result_div.append((i+1)+'-'+visual.answer[i]+';')
+		}
+	}else{
+		$result_div.html('the correct answer is '+ visual.answer)
+	}
     $finish_button.show();
   })
   var $Rewind_button = $('<button>Rewind</button>')
