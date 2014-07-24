@@ -1,3 +1,4 @@
+window.quiz_active = false
 var PentimentoPlayer = function(data) {
     var GAP = 0.005;
     var numExpansion = 6; 
@@ -720,7 +721,9 @@ var PentimentoPlayer = function(data) {
             e.preventDefault();
             e.stopPropagation();
             var keyCode = e.keyCode || e.which;
-        
+            if(quiz_active){
+              return;
+            }
             if(keyCode===27) {// esc
                 root.find('#fullscreen').click();
                 setTimeout(resizeVisuals,100);

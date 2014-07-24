@@ -28,6 +28,7 @@ var Pentimento_quiz = function(visual){
   var $submit_button = $('<button>Answer</button>')
   var $result_div = $('<div class = "result"></div>')
   
+  
   $submit_button.click(function(e){
     
     if (visual.question_type == 'multiple_choice'){
@@ -57,6 +58,7 @@ var Pentimento_quiz = function(visual){
     finished = true;
     $quiz_main.dialog("close");
     audioM.play();
+    quiz_active = false;
   })
   
   var $Retry_button = $('<button>Retry</button>')
@@ -80,6 +82,7 @@ var Pentimento_quiz = function(visual){
     $quiz_main.dialog("close");
     audioM.currentTime = visual.rewindtime;
     audioM.play();
+    quiz_active = false;
   })
   $quiz_body.append($submit_button)
   $quiz_main.append($quiz_question)
@@ -105,6 +108,7 @@ var Pentimento_quiz = function(visual){
         });
         audioM.pause();
         onscreen = true;
+        quiz_active = true;
       }
     }
   }

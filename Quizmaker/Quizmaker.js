@@ -41,8 +41,13 @@ $(function(){
   })
   
   $('#Ma_remove').click(function(e){
-    console.log('executing')
     $('#matching_table tr:last').remove();
+  })
+  
+  
+  $('#generate').click(function(e){
+
+    
   })
   
   

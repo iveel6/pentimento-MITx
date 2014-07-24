@@ -14,7 +14,8 @@
     <input type="text" name="Question Title" id="Question Title">
   </p>
   <p>Question Type: 
-    <input type="radio" name="question" id="Q_MC" value="Question_Type_MC"> Multiple Choice
+    <input type="radio" name= 'question' id="Q_MC" value="Question_Type_MC"> Multiple Choice (Single Answer)
+    <input type = 'radio' name = 'question' id = 'Q_MMC' value = 'Multiple_choice_2' > Multiple Choice (Multiple Answers)
     <input type = 'radio' name = 'question' id = 'Q_FR' value = 'Free_response'> Free Response
     <input type = 'radio' name  = 'question' id = 'Q_Ma' value = 'matching'> Matching
   </p>
@@ -26,7 +27,13 @@
     <div id = 'multiple_choice_answers' class = 'answer_specific_type'>
       <table id = 'choices_table'>
       </table>
-      <button id = 'MC_add'>Add more choice</button>
+      <button id = 'MC_add'>Add another choice</button>
+      <button id = 'MC_remove'>Remove choice</button>
+    </div>
+    <div id = 'multiple_choice_answers_2' class = 'answer_specific_type'>
+      <table id = 'choices_table_2'>
+      </table>
+      <button id = 'MC_add'>Add another choice</button>
       <button id = 'MC_remove'>Remove choice</button>
     </div>
     <div id = 'free_response_answers' class = 'answer_specific_type'>
@@ -44,6 +51,6 @@
     
     </div>
   </div>
-  
-  <input type = 'submit' id = 'submit' value = 'Generate Quiz'>
-</body>
+ 
+  <button id = 'generate'>Generate Quiz</button>
+ </body>
