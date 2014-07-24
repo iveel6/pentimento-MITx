@@ -42,8 +42,10 @@ var Pentimento_quiz = function(visual){
 	  for (i in shuffled_order){
 		  var row = $('<tr><td><input type="text" style="width:20px"></td><td>'+(NUMBERS[i]+1)+'. '+ visual.left_side[i]+'</td><td>'+'&nbsp&nbsp&nbsp'+LETTERS[i]+'. '+visual.right_side[shuffled_order[i]]+'</td></tr>');
 		  table.append(row);
+    console.log(LETTERS[shuffled_order[i]])
 		  visual.answer.push(LETTERS[shuffled_order[i]]);
 	  }
+    console.log(visual.answer)
 	  $quiz_body.append(table);
   }	  
 
