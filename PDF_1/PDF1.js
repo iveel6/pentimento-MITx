@@ -171,6 +171,7 @@ var lecture = {
       "tx" : 0.000000, "ty" : 0.000000
     } ],
 },
+{"question":"question quizmaker answer 6","type":"quiz","question_type":"multiple_choice","tMin":180,"tMax":220,"rewindtime":100,"transforms":[{"time":0,"m11":1,"m12":0,"m21":0,"m22":1,"tx":0,"ty":0}],"choices":["wrong answer","right answer","incorrect answer","false answer"],"answer":["right answer"]},
 {
 "type" : "quiz",
 "tMin" : 300.0,
