@@ -3,7 +3,7 @@ var Pentimento_quiz = function(visual){
 	var audioM = $('audio')[0];
 	var finished = false;
 	var onscreen = false;
-	var NUMBERS = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26];
+	var NUMBERS = [0, 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25];
 	var LETTERS = ['a', 'b', 'c', 'd', 'e', 'f', 'g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
  
   function checkbounds(a,b){
@@ -40,11 +40,10 @@ var Pentimento_quiz = function(visual){
 	  //shuffle matchings
 	  shuffled_order.sort(function() { return 0.5 - Math.random() }); 
 	  for (i in shuffled_order){
-		  var row = $('<tr><td><input type="text" style="width:20px"></td><td>'+NUMBERS[i]+'. '+ visual.left_side[i]+'</td><td>'+'&nbsp&nbsp&nbsp'+LETTERS[i]+'. '+visual.right_side[shuffled_order[i]-1]+'</td></tr>');
+		  var row = $('<tr><td><input type="text" style="width:20px"></td><td>'+(NUMBERS[i]+1)+'. '+ visual.left_side[i]+'</td><td>'+'&nbsp&nbsp&nbsp'+LETTERS[i]+'. '+visual.right_side[shuffled_order[i]]+'</td></tr>');
 		  table.append(row);
-		  visual.answer.push(LETTERS[shuffled_order[i]-1]);
+		  visual.answer.push(LETTERS[shuffled_order[i]]);
 	  }
-	  
 	  $quiz_body.append(table);
   }	  
 
