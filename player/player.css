@@ -43,6 +43,7 @@ body{
 }
 
 .chapters_view {
+    z-index: -2;
     position: relative;
     height: 128px;
     overflow: hidden;

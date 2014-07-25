@@ -927,11 +927,13 @@ var PentimentoPlayer = function(data) {
             setFullscreenMode(false);
         });
         $('.viewChapterNav').on('click', function() {
-			if (!PDF_ready){
-				initiateSlides();
-				PDF_ready = true;
-			}
-            toggleChaptersVisibility();
+             if (!PDF_ready){
+              initiateSlides();
+              PDF_ready = true;
+              toggleChaptersVisibility();
+             }else{
+              toggleChaptersVisibility();
+             }
         });
         
         $(window).on('resize', resizeVisuals);
