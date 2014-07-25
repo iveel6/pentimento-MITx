@@ -29,7 +29,6 @@ var Pentimento_iframe = function(visual){
   $(iframe).css('z-index','2')
   $(iframe).css('display', 'none')
   $('.canvas_container').append(iframe)
-  $('#main_canvas').css('pointer-events','none')
 
   //always render iframe no matter where it is. 
   //it's not very expensive(native html element), and not doing this can cause iframe to appear when it shouldn't
