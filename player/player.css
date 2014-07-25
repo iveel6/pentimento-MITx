@@ -28,6 +28,7 @@ body{
 	bottom: 0px;
 	font-size: 12px;
 	background-color: #ddd;
+	display: flex;
 }
 
 
@@ -110,11 +111,12 @@ body{
 }
 
 .chapter_nav > svg{
-	width: 20px;
+	width: 40px;
 }
 .right {
     left: 90%;
 }
+
 /*end changes*/
 
 .video{
