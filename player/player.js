@@ -624,6 +624,8 @@ var PentimentoPlayer = function(data) {
         });
         
         //show thumbnail over timeline
+		
+		//Because here slider at $("#slider") and thumbnail box are independent, when an user clicks on #slider, slider handle doesn't go to the exact time that appears in thumbnail box. 
         $('#slider').on("mousemove", function(evt) {
 			//computing time on thumbnail 
             var thumb_posX = evt.clientX - $(this).offset().left-1;
@@ -751,7 +753,7 @@ var PentimentoPlayer = function(data) {
 		
     /*************************
     *
-    *   Handlers of chapter navigation
+    *   Handler functions of chapter navigation
     *
     *************************/
 		
