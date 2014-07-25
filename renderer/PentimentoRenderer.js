@@ -4,7 +4,6 @@
  * - resourcepath: the path to resources (images, etc)
  */
 var PentimentoRenderer = function(canvas_container, data, resourcepath) {
-    console.log(data.boundingRect)
     var jq_canvas = canvas_container.find("canvas");
     var main_canvas = jq_canvas[0];
     var main_context = main_canvas.getContext('2d');
@@ -46,7 +45,7 @@ var PentimentoRenderer = function(canvas_container, data, resourcepath) {
         else if(data.visuals[i].type === 'quiz')
             data.visuals[i] = new Pentimento_quiz(data.visuals[i])
         else
-            console.log('Unknown type: '+data.visuals[i].type);
+            console.log('Unknown type: '+data.visuals[i].type); //thumbnail render must print this statement
     }
     if (data.hasSlides){
       var slides = new Slide_Wrapper(data.height,data.width,resourcepath)

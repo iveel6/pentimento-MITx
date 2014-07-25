@@ -1,9 +1,9 @@
 window.quiz_active = false
 var PentimentoPlayer = function(data) {
     var GAP = 0.005;
-    var numExpansion = 6; 
+    var numExpansion = 7; //number of expanded slides on chapter nav
 	var PDF_ready = false;
-	var numSlides = data.pageFlips.length;
+	var numSlides = data.pageFlips.length; //current number of expanded slides on chapter nav
 	var thumbnail_slideStorage = [];
 	var thumbnail_container = $("#thumbnail_container");
 	var thumbnail_width = thumbnail_container.width();
@@ -618,23 +618,18 @@ var PentimentoPlayer = function(data) {
 				if (event.originalEvent) {
                     audio.currentTime = ui.value;
                     renderer.renderFrame(ui.value);
-//                    var next = getTransform(ui.value);
-//                    var initFree = freePosition;
-//                    freePosition = true;
-//                    animateToPos(Date.now(), 500, translateX, translateY, totalZoom, next.tx, next.ty, next.m11, function() {
-//                        freePosition = initFree;
-//                    });
                 }
             }
-                    //only call if it was a user-induced change, not program-induced
+             //only call if it was a user-induced change, not program-induced
         });
         
         //show thumbnail over timeline
         $('#slider').on("mousemove", function(evt) {
+			//computing time on thumbnail 
             var thumb_posX = evt.clientX - $(this).offset().left-1;
             var sliderW = $(this).innerWidth();
             var thumb_time = thumb_posX/sliderW*endTime;
-			//thumb_time should be in range 0 - endTime
+			//thumbnial time should be in range 0 - endTime
 			thumb_time = Math.min( Math.max(0, thumb_time), endTime); 
             var thumb_distX;
             
@@ -752,6 +747,13 @@ var PentimentoPlayer = function(data) {
         $('#controlChapters').append('<button id="toSlides">Slides</button>')
 		.append('<button id="collapse"></button>')
 		.append('<span id="timeInterval"></span>') ;
+		
+		
+    /*************************
+    *
+    *   Handlers of chapter navigation
+    *
+    *************************/
 		
 		//change time interval of change slide roll 
 		function setSlideInterval( begin, end, slideNum){
