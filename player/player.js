@@ -631,7 +631,7 @@ var PentimentoPlayer = function(data) {
         
         //show thumbnail over timeline
         $('#slider').on("mousemove", function(evt) {
-            var thumb_posX = evt.clientX - $(this).offset().left;
+            var thumb_posX = evt.clientX - $(this).offset().left-1;
             var sliderW = $(this).innerWidth();
             var thumb_time = thumb_posX/sliderW*endTime;
 			//thumb_time should be in range 0 - endTime
@@ -755,7 +755,7 @@ var PentimentoPlayer = function(data) {
 		
 		//change time interval of change slide roll 
 		function setSlideInterval( begin, end, slideNum){
-			$("#timeInterval").html('Current interval: '+ secondsToTimestamp(begin) + ' - ' + secondsToTimestamp(end))
+			$("#timeInterval").html('Time interval: '+ secondsToTimestamp(begin) + ' - ' + secondsToTimestamp(end))
 			if (slideNum != undefined){
 				$("#timeInterval").append('; slide#'+slideNum);
 			}		
@@ -867,8 +867,11 @@ var PentimentoPlayer = function(data) {
 		
 		function slideHandlers() {
 			$('.chapters_item').on('click', function() {
-				jumpToChapter(parseInt($(this).attr('id').split('_')[1]));
+				var toChapter = parseInt($(this).attr('id').split('_')[1]);
+				eventHandler({event: 'refocus', data: {}});
+				setTimeout(function(){jumpToChapter(toChapter)}, 20);
 			});
+			
 			$('.expand').on('click', function() {
 				var thPage = $(this).attr("id").split("_")[1];
 				expandRoll(thPage); 
