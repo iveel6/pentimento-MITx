@@ -167,7 +167,7 @@ var PentimentoRenderer = function(canvas_container, data, resourcepath) {
      */
     function fastRender(time, previoustime, context, xscale, yscale, timeOfPreviousThumb){
       for(var i=0; i<data.visuals.length; i++){
-        if (data.visuals[i].isBetweenTime(previoustime, time)){ //|| data.visuals[i].getType() == 'video'){
+        if (data.visuals[i].isBetweenTime(previoustime, time)|| data.visuals[i].getType() == 'video'){
           data.visuals[i].render(time, context, xscale, yscale, timeOfPreviousThumb, transformMatrix);
         }
       }

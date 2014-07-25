@@ -54,12 +54,13 @@ var Pentimento_iframe = function(visual){
         $iframe.css('display', 'none')
       }
     }
+    console.log(context.canvas.id)
   }
   
   this.render = function(time, context, xscale, yscale, timeOfPreviousThumb, transformMatrix) {
     if(time>visual.tMin){
       this.drawSelf(time,context,xscale,yscale,null,transformMatrix)
-    }else{
+    }else if(context.canvas.id == 'main_canvas'){
       $iframe.css('display','none')
     }
 }
