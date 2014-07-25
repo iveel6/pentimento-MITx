@@ -195,6 +195,7 @@ var Slide_Wrapper = function (height, width, resourcepath){
     loaded = true;
     InitializeSlides();
   });
+  
   this.drawSelf = function(time, context, xscale, yscale,greyout, transformMatrix){
     if(ready){
       slides.forEach(function(ele){
