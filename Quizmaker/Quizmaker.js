@@ -45,8 +45,9 @@ $(function(){
   
   $('#MC_remove').click(function(e){
     e.preventDefault();
-    MC_row_num -= 1;
-    $('#choices_table tr:last').remove();
+    if($('#choices_table tr').length > 1){
+      $('#choices_table tr:last').remove();
+    }
   })
   
   $('#MMC_add').click(function(e){
@@ -54,14 +55,18 @@ $(function(){
   })
   
   $('#MMC_remove').click(function(e){
-    $('#choices_table_2 tr:last').remove();
+    if($('#choices_table_2 tr').length > 1){
+      $('#choices_table_2 tr:last').remove();
+    }
   })
   $('#Ma_add').click(function(e){
     $('#matching_table').append(Create_Match_row());
   })
   
   $('#Ma_remove').click(function(e){
-    $('#matching_table tr:last').remove();
+    if($('#matching_table tr').length > 1){
+      $('#matching_table tr:last').remove();
+    }
   })
   
   

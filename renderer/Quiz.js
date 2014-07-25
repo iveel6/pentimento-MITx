@@ -68,8 +68,9 @@ var Pentimento_quiz = function(visual){
 
 	}
     
-    $submit_button.hide()
+    $submit_button.hide();
     $quiz_body.find('input').attr('disabled', 'true');
+
     
     //this should be done on the server to beat clever hackers
     if (ans == visual.answer){
@@ -83,7 +84,7 @@ var Pentimento_quiz = function(visual){
     }
   })
   
-  var $finish_button = $('<button>Move On</button>')
+  var $finish_button = $('<button>Resume</button>')
   $finish_button.click(function(e){
     finished = true;
     $quiz_main.dialog("close");
@@ -134,6 +135,11 @@ var Pentimento_quiz = function(visual){
   $Reveal_button.hide();
   $Rewind_button.hide();
   
+  $quiz_body.find('input:last').keyup(function(e){
+      if(e.keyCode == 13){
+        $submit_button.click()
+      }
+  })
   this.drawSelf = function(time, context){
     if(time < visual.tMax && context.canvas.id == 'main_canvas'){
       if(!finished){
